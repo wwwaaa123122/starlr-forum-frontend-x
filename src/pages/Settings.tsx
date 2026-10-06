@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
+import { ImageCropDialog } from '@/components/ui/ImageCropDialog';
 import { changePassword, revokeOthers, revokeSession, updateMe, uploadImage } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
 import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primitives';
@@ -34,6 +35,8 @@ export default function Settings() {
   const [nickname, setNickname] = useState('');
   const [bio, setBio] = useState('');
   const [initialized, setInitialized] = useState(false);
+  /** 待裁剪的图片（头像 / 背景图） */
+  const [cropTarget, setCropTarget] = useState<{ file: File; kind: 'avatar' | 'background' } | null>(null);
 
   useEffect(() => {
     document.title = '设置 - Starlr Forum';
@@ -163,7 +166,7 @@ export default function Settings() {
               移除
             </Button>
           )}
-          <span className="text-xs text-faint">宽幅横图最佳 · 上传前自动压缩</span>
+          <span className="text-xs text-faint">宽幅横图最佳 · 可框选裁剪预览 · 自动压缩</span>
         </div>
         <input
           ref={bgFileRef}
@@ -172,8 +175,8 @@ export default function Settings() {
           className="hidden"
           onChange={(e) => {
             const f = e.target.files?.[0];
-            if (f) backgroundUploadMut.mutate(f);
             e.target.value = '';
+            if (f) setCropTarget({ file: f, kind: 'background' });
           }}
         />
       </section>
@@ -230,7 +233,7 @@ export default function Settings() {
             <Button variant="outline" pill size="sm" onClick={() => fileRef.current?.click()}>
               更换头像
             </Button>
-            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/GIF/WEBP</p>
+            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/WEBP（可框选裁剪）· GIF 直接使用</p>
           </div>
           <input
             ref={fileRef}
@@ -239,8 +242,14 @@ export default function Settings() {
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
-              if (f) avatarMut.mutate(f);
               e.target.value = '';
+              if (!f) return;
+              // GIF 直接上传（裁剪会丢失动画帧）
+              if (f.type === 'image/gif') {
+                avatarMut.mutate(f);
+                return;
+              }
+              setCropTarget({ file: f, kind: 'avatar' });
             }}
           />
         </div>
@@ -275,6 +284,22 @@ export default function Settings() {
       </section>
 
       <PasswordSection />
+
+      <ImageCropDialog
+        open={Boolean(cropTarget)}
+        file={cropTarget?.file ?? null}
+        title={cropTarget?.kind === 'avatar' ? '裁剪头像' : '裁剪主页背景图'}
+        aspect={cropTarget?.kind === 'avatar' ? 1 : 3}
+        circular={cropTarget?.kind === 'avatar'}
+        preview={cropTarget?.kind === 'background'}
+        onCancel={() => setCropTarget(null)}
+        onConfirm={(cropped) => {
+          const kind = cropTarget?.kind;
+          setCropTarget(null);
+          if (kind === 'avatar') avatarMut.mutate(cropped);
+          else if (kind === 'background') backgroundUploadMut.mutate(cropped);
+        }}
+      />
 
       <SessionsSection />
 
