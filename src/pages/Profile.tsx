@@ -30,7 +30,7 @@ export default function Profile() {
   const profile = data?.user;
 
   useEffect(() => {
-    document.title = profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) · Starlr` : 'Starlr';
+    document.title = profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - Starlr Forum` : 'Starlr';
   }, [profile]);
 
   const postsQuery = useInfiniteQuery({

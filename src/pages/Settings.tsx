@@ -29,7 +29,7 @@ export default function Settings() {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    document.title = '设置 · Starlr';
+    document.title = '设置 - Starlr Forum';
   }, []);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ export default function NotFound() {
   return (
     <EmptyState
       icon={<Telescope size={48} strokeWidth={1.2} />}
-      title="这片星域不存在"
+      title="这个页面不存在"
       description="你也许点进了一个已熄灭的坐标"
       action={
         <Button pill onClick={() => navigate('/')}>

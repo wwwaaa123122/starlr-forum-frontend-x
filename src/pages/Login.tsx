@@ -76,7 +76,7 @@ export default function Login() {
                 <Input
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="starlighter"
+                  placeholder="用户名或邮箱"
                   autoComplete="username"
                   className="pl-10"
                   autoFocus
@@ -107,9 +107,10 @@ export default function Login() {
               忘记密码？
             </Link>
           </div>
-          <p className="mt-6 flex items-start gap-1.5 text-xs leading-relaxed text-faint">
-            <Star size={12} className="mt-0.5 shrink-0 text-star" />
-            登录即代表同意社区守则：友善交流、尊重版权、不发布违法违规内容。
+          <p className="mt-6 text-xs leading-relaxed text-faint">
+            登录即代表你同意{' '}
+            <Link to="/terms" className="text-brand hover:underline">《用户协议》</Link> 和{' '}
+            <Link to="/privacy" className="text-brand hover:underline">《隐私政策》</Link>。
           </p>
         </div>
       </div>

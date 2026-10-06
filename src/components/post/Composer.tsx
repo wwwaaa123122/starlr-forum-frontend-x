@@ -1,4 +1,4 @@
-/** 发帖器：标题 + Markdown 正文 + 星域分类 + 标签 + 图片上传 + @提及自动补全 */
+/** 发帖器：标题 + Markdown 正文 + 板块分类 + 标签 + 图片上传 + @提及自动补全 */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -130,7 +130,7 @@ export function Composer({
     if (mode === 'post') {
       if (title.trim().length < 2) return toast.error('标题至少 2 个字符');
       if (!content.trim()) return toast.error('正文不能为空');
-      if (!categoryId) return toast.error('请选择星域分类');
+      if (!categoryId) return toast.error('请选择板块');
       setSubmitting(true);
       try {
         await createPost({ title: title.trim(), content, categoryId, tags });
@@ -288,7 +288,7 @@ export function Composer({
                       className="btn-icon focus-ring h-9 gap-1 px-2.5 text-[13px] font-semibold text-muted hover:bg-brand-soft hover:text-brand"
                     >
                       <Hash size={16} />
-                      <span className="max-w-[88px] truncate">{selectedCat?.name ?? '星域'}</span>
+                      <span className="max-w-[88px] truncate">{selectedCat?.name ?? '板块'}</span>
                       <ChevronDown size={13} />
                     </button>
                   )}
@@ -303,7 +303,7 @@ export function Composer({
                             disabled={locked}
                             className={cn(locked && 'opacity-40')}
                             onClick={() => {
-                              if (locked) return toast.error('该星域仅限版主及以上发布');
+                              if (locked) return toast.error('该板块仅限版主及以上发布');
                               setCategoryId(c.slug);
                             }}
                           >

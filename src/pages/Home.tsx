@@ -23,7 +23,7 @@ export default function Home() {
   const tag = searchParams.get('tag') ?? undefined;
 
   useEffect(() => {
-    document.title = 'Starlr · 星辰旅人';
+    document.title = 'Starlr Forum';
   }, []);
 
   const {
@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <>
       <ColumnHeader
-        title={filterLabel ? (category ? '星域' : '标签') : '首页'}
+        title={filterLabel ? (category ? '板块' : '标签') : '首页'}
         showBrandOnMobile={!filterLabel}
         tabs={
           filterLabel ? undefined : (
@@ -119,7 +119,7 @@ export default function Home() {
         <EmptyState
           icon={<Sparkles size={44} strokeWidth={1.2} />}
           title={filterLabel ? '这里还没有星迹' : '还没有帖子'}
-          description={filterLabel ? '换个星域看看，或发布第一帖点亮它' : '发布第一帖，点亮这片星海'}
+          description={filterLabel ? '换个板块看看，或发布第一帖点亮它' : '发布第一帖，点亮这片星海'}
           action={
             user ? (
               <Button pill onClick={() => setModalOpen(true)}>

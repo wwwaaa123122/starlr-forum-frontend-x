@@ -39,7 +39,7 @@ export function LeftSidebar() {
     { to: '/explore', label: '探索', icon: Compass },
     { to: '/notifications', label: '通知', icon: Bell, badge: unread, requireAuth: true },
     { to: '/bookmarks', label: '书签', icon: Bookmark, requireAuth: true },
-    { to: '/categories', label: '星域', icon: Hash },
+    { to: '/categories', label: '板块', icon: Hash },
     ...(user ? [{ to: `/u/${user.username}`, label: '我的主页', icon: UserIcon }] : []),
   ];
 
@@ -205,7 +205,7 @@ export function drawerNavItems(user: { username: string } | null, unread: number
     { to: '/explore', label: '探索', icon: Compass },
     { to: '/notifications', label: '通知', icon: Bell, badge: unread, requireAuth: true },
     { to: '/bookmarks', label: '书签', icon: Bookmark, requireAuth: true },
-    { to: '/categories', label: '星域', icon: Hash },
+    { to: '/categories', label: '板块', icon: Hash },
   ];
   if (user) items.push({ to: `/u/${user.username}`, label: '我的主页', icon: UserIcon });
   else items.push({ to: '/login', label: '登录', icon: LogIn }, { to: '/register', label: '注册', icon: UserPlus });

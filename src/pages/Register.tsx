@@ -15,6 +15,7 @@ export default function Register() {
   const [done, setDone] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [siteKey, setSiteKey] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
 
   useEffect(() => {
     void fetchSiteConfig().then((cfg) => setSiteKey(cfg.turnstileSiteKey));
@@ -26,6 +27,7 @@ export default function Register() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.password !== form.confirm) return toast.error('两次输入的密码不一致');
+    if (!agreed) return toast.error('请先阅读并同意《用户协议》与《隐私政策》');
     setLoading(true);
     try {
       const user = await register({
@@ -98,29 +100,43 @@ export default function Register() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1.5 block text-[13px] font-semibold text-muted">用户名 *</span>
-                <Input value={form.username} onChange={set('username')} placeholder="star-lighter" required minLength={3} maxLength={24} />
+                <Input value={form.username} onChange={set('username')} placeholder="用户名" required minLength={3} maxLength={24} />
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-[13px] font-semibold text-muted">昵称</span>
-                <Input value={form.nickname} onChange={set('nickname')} placeholder="星尘旅人" maxLength={24} />
+                <Input value={form.nickname} onChange={set('nickname')} placeholder="选填" maxLength={24} />
               </label>
             </div>
             <label className="block">
               <span className="mb-1.5 block text-[13px] font-semibold text-muted">邮箱 *</span>
               <div className="relative">
                 <AtSign size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" />
-                <Input type="email" value={form.email} onChange={set('email')} placeholder="you@example.com" required className="pl-10" />
+                <Input type="email" value={form.email} onChange={set('email')} placeholder="邮箱" required className="pl-10" />
               </div>
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-[13px] font-semibold text-muted">密码 *（至少 8 位）</span>
-              <Input type="password" value={form.password} onChange={set('password')} placeholder="••••••••" required minLength={8} maxLength={128} />
+              <span className="mb-1.5 block text-[13px] font-semibold text-muted">密码 *</span>
+              <Input type="password" value={form.password} onChange={set('password')} placeholder="8 位以上" required minLength={8} maxLength={128} />
             </label>
             <label className="block">
               <span className="mb-1.5 block text-[13px] font-semibold text-muted">确认密码 *</span>
-              <Input type="password" value={form.confirm} onChange={set('confirm')} placeholder="••••••••" required minLength={8} />
+              <Input type="password" value={form.confirm} onChange={set('confirm')} placeholder="再次输入密码" required minLength={8} />
             </label>
             <Turnstile siteKey={siteKey} onToken={setTurnstileToken} />
+            <label className="flex cursor-pointer items-start gap-2 text-[13px] leading-relaxed text-muted">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-brand"
+                aria-label="同意用户协议与隐私政策"
+              />
+              <span>
+                我已阅读并同意
+                <Link to="/terms" className="text-brand hover:underline">《用户协议》</Link> 和{' '}
+                <Link to="/privacy" className="text-brand hover:underline">《隐私政策》</Link>。
+              </span>
+            </label>
             <Button pill size="lg" className="w-full" disabled={loading}>
               {loading ? <Loader2 size={17} className="animate-spin" /> : <UserPlus size={17} />} 创建账号
             </Button>

@@ -108,7 +108,7 @@ export default function PostDetail() {
   });
 
   useEffect(() => {
-    document.title = post ? `${post.title} · Starlr` : 'Starlr';
+    document.title = post ? `${post.title} - Starlr Forum` : 'Starlr';
   }, [post]);
 
   /* 楼中楼：parentReplyId 分组 */

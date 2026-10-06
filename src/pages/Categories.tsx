@@ -1,4 +1,4 @@
-/** 星域（分类）列表页：卡片网格 */
+/** 板块（分类）列表页：卡片网格 */
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -19,13 +19,13 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 export default function Categories() {
   useEffect(() => {
-    document.title = '星域 · Starlr';
+    document.title = '板块 - Starlr Forum';
   }, []);
   const { data, isLoading } = useQuery({ queryKey: ['categories'], queryFn: listCategories });
 
   return (
     <>
-      <ColumnHeader title="星域" back subtitle="按话题划分的讨论区" />
+      <ColumnHeader title="板块" back subtitle="按话题划分的讨论区" />
       {isLoading ? (
         <div className="grid gap-3 p-4 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
@@ -33,7 +33,7 @@ export default function Categories() {
           ))}
         </div>
       ) : (data?.categories ?? []).length === 0 ? (
-        <EmptyState title="暂无星域" />
+        <EmptyState title="暂无板块" />
       ) : (
         <div className="grid gap-3 p-4 sm:grid-cols-2">
           {data!.categories.map((c) => (
@@ -56,7 +56,7 @@ export default function Categories() {
                 )}
               </div>
               <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted">
-                {c.description || '自由交流的星域'}
+                {c.description || '自由交流的板块'}
               </p>
             </Link>
           ))}

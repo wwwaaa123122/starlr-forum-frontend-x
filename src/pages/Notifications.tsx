@@ -30,7 +30,7 @@ export default function Notifications() {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    document.title = '通知 · Starlr';
+    document.title = '通知 - Starlr Forum';
   }, []);
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery({

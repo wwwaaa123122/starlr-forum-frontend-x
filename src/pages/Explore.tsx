@@ -19,7 +19,7 @@ export default function Explore() {
   const q = searchParams.get('q') ?? '';
 
   useEffect(() => {
-    document.title = '探索 · Starlr';
+    document.title = '探索 - Starlr Forum';
   }, []);
 
   const submit = (value: string) => {
@@ -104,7 +104,7 @@ export default function Explore() {
       </div>
 
       {!searching ? (
-        /* 发现页：热门标签 + 星域 */
+        /* 发现页：热门标签 + 板块 */
         <div className="px-4 py-4">
           <section className="mb-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-extrabold">
@@ -129,7 +129,7 @@ export default function Explore() {
 
           <section>
             <h2 className="mb-3 flex items-center gap-2 text-lg font-extrabold">
-              <Sparkles size={18} className="text-brand" /> 星域
+              <Sparkles size={18} className="text-brand" /> 板块
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {(catsData?.categories ?? []).map((c) => (
@@ -145,7 +145,7 @@ export default function Explore() {
                     </span>
                     <span className="text-xs text-muted">{formatCount(c.postCount)} 帖</span>
                   </div>
-                  <p className="mt-1 line-clamp-2 text-[13px] text-muted">{c.description || '自由交流的星域'}</p>
+                  <p className="mt-1 line-clamp-2 text-[13px] text-muted">{c.description || '自由交流的板块'}</p>
                 </Link>
               ))}
             </div>
@@ -155,7 +155,7 @@ export default function Explore() {
         <>
           {filterLabel && (
             <div className="border-b border-line bg-surface px-4 py-2 text-sm font-bold text-brand">
-              {category ? `星域：${category}` : `标签：${filterLabel}`}
+              {category ? `板块：${category}` : `标签：${filterLabel}`}
             </div>
           )}
           {isLoading ? (

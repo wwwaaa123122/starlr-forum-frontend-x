@@ -10,7 +10,7 @@ import { EmptyState } from '@/components/ui/primitives';
 
 export default function Bookmarks() {
   useEffect(() => {
-    document.title = '书签 · Starlr';
+    document.title = '书签 - Starlr Forum';
   }, []);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({

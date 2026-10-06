@@ -1,4 +1,4 @@
-/** 右栏（≥1024）：搜索框、热门标签「正在闪耀」、星域分类、页脚 */
+/** 右栏（≥1024）：搜索框、热门标签「正在闪耀」、板块分类、页脚 */
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -16,12 +16,11 @@ export function RightRail({ hidden }: { hidden?: boolean }) {
       <CategoriesCard />
       <footer className="px-3 text-[13px] leading-5 text-faint">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
-          <span>服务条款</span>
-          <span>隐私政策</span>
-          <span>Cookie</span>
-          <span>无障碍</span>
+          <Link to="/terms" className="hover:underline">用户协议</Link>
+          <Link to="/privacy" className="hover:underline">隐私政策</Link>
+          <Link to="/privacy" className="hover:underline">Cookie</Link>
         </div>
-        <div className="mt-1">© 2025 Starlr · 星辰旅人论坛</div>
+        <div className="mt-1">© 2025 Starlr Forum</div>
       </footer>
     </aside>
   );
@@ -101,12 +100,12 @@ function TrendsCard() {
   );
 }
 
-/** 星域分类卡 */
+/** 板块分类卡 */
 function CategoriesCard() {
   const { data, isLoading } = useQuery({ queryKey: ['categories'], queryFn: listCategories });
   return (
     <section className="overflow-hidden rounded-2xl border border-line bg-surface">
-      <h2 className="px-4 pb-2 pt-3 text-lg font-extrabold">星域导航</h2>
+      <h2 className="px-4 pb-2 pt-3 text-lg font-extrabold">板块</h2>
       {isLoading ? (
         <div className="space-y-3 px-4 pb-4">
           <Skeleton className="h-10" />
