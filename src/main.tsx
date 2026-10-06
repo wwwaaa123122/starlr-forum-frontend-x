@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import App from './App';
 import { AuthProvider } from './lib/auth';
+import { initTheme } from './lib/theme';
 import './index.css';
 
 
@@ -19,19 +20,7 @@ const queryClient = new QueryClient({
 });
 
 /** 主题：暗色优先，跟随 localStorage 记忆 */
-function applyTheme() {
-  try {
-    const saved = localStorage.getItem('starlr.theme');
-    const theme = saved === 'light' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = theme;
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
-  } catch {
-    /* ignore */
-  }
-}
-applyTheme();
+initTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -56,4 +45,3 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
-export { applyTheme };

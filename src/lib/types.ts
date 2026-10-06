@@ -102,6 +102,10 @@ export interface UserProfile {
   replyCount: number;
   createdAt: string;
   banned?: boolean;
+  /** 喜欢（点赞列表）是否公开 */
+  likesPublic?: boolean;
+  /** 主页背景图 */
+  backgroundUrl?: string | null;
 }
 
 export interface MeUser extends UserProfile {
@@ -124,12 +128,15 @@ export interface TagItem {
 
 export interface SessionItem {
   id: string;
-  deviceInfo: string;
+  /** 原始 User-Agent（前端解析为友好设备名） */
+  device: string;
   ip: string;
-  createdAt: string;
+  /** 城市等位置文本（Cloudflare IP 库），历史会话可能为空 */
+  location: string;
+  colo?: string;
+  loginAt: string;
   lastUsedAt: string | null;
   current?: boolean;
-  identified?: number | boolean;
 }
 
 export interface AuthTokens {

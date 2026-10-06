@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, LogOut, Moon, Settings, Sun, UserPlus } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
-import { applyTheme } from '@/main';
+import { toggleTheme, useTheme } from '@/lib/theme';
 import { Avatar } from '@/components/ui/primitives';
 import { drawerNavItems } from './LeftSidebar';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,7 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
   if (!open) return null;
 
   const items = drawerNavItems(user, unread);
-  const isDark = document.documentElement.dataset.theme !== 'light';
+  const isDark = useTheme() === 'dark';
 
   const go = (to: string) => {
     onClose();
@@ -99,16 +99,7 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
         {/* 底部：主题 + 登出 */}
         <div className="mt-auto flex flex-col gap-1 border-t border-line pt-4">
           <button
-            onClick={() => {
-              const next = isDark ? 'light' : 'dark';
-              document.documentElement.dataset.theme = next;
-              try {
-                localStorage.setItem('starlr.theme', next);
-              } catch {
-                /* ignore */
-              }
-              applyTheme();
-            }}
+            onClick={() => toggleTheme()}
             className="flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2"
           >
             {isDark ? <Moon size={22} strokeWidth={1.9} /> : <Sun size={22} strokeWidth={1.9} />}

@@ -4,10 +4,17 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
   Camera,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
+  Laptop,
   Loader2,
   LogOut,
+  MapPin,
   MonitorSmartphone,
   ShieldCheck,
+  Smartphone,
+  Tablet,
   Trash2,
   UserRound,
 } from 'lucide-react';
@@ -19,7 +26,7 @@ import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primit
 import { cn, displayName, relativeTime } from '@/lib/utils';
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -50,6 +57,37 @@ export default function Settings() {
     onError: (e) => toast.error(e instanceof Error ? e.message : '更新失败'),
   });
 
+  const bgFileRef = useRef<HTMLInputElement>(null);
+
+  const backgroundMut = useMutation({
+    mutationFn: (url: string | null) => updateMe({ backgroundUrl: url }),
+    onSuccess: (res) => {
+      setUser(res.user);
+      toast.success('背景图已更新');
+      void queryClient.invalidateQueries({ queryKey: ['user', user?.username] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : '操作失败'),
+  });
+
+  const backgroundUploadMut = useMutation({
+    mutationFn: async (file: File) => uploadImage(file, 'background'),
+    onSuccess: (url) => backgroundMut.mutate(url),
+    onError: (e) => toast.error(e instanceof Error ? e.message : '上传失败'),
+  });
+
+  const likesPublicMut = useMutation({
+    mutationFn: async (on: boolean) => {
+      const res = await updateMe({ likesPublic: on });
+      setUser(res.user);
+      return res.user;
+    },
+    onSuccess: (u) => {
+      toast.success(u.likesPublic ? '喜欢已公开，其他用户可在你的主页查看' : '喜欢已设为私密，仅自己可见');
+      void queryClient.invalidateQueries({ queryKey: ['user', user?.username] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : '操作失败'),
+  });
+
   const avatarMut = useMutation({
     mutationFn: async (file: File) => uploadImage(file, 'avatar'),
     onSuccess: () => {
@@ -78,6 +116,101 @@ export default function Settings() {
           </p>
         </div>
       )}
+
+      {/* 主页背景图 */}
+      <section className="border-b border-line px-4 py-5">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-extrabold">
+          <ImageIcon size={18} /> 主页背景图
+        </h2>
+        <div
+          className={cn(
+            'relative h-[120px] overflow-hidden rounded-2xl border border-line md:h-[150px]',
+            !user.backgroundUrl && 'bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_60%)]',
+          )}
+        >
+          {user.backgroundUrl ? (
+            <img src={user.backgroundUrl} alt="主页背景图" className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-faint">
+              尚未设置 · 将显示在你的主页顶部
+            </div>
+          )}
+          {backgroundUploadMut.isPending && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <Loader2 size={22} className="animate-spin text-white" />
+            </div>
+          )}
+        </div>
+        <div className="mt-2.5 flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            pill
+            size="sm"
+            disabled={backgroundUploadMut.isPending}
+            onClick={() => bgFileRef.current?.click()}
+          >
+            <Camera size={15} /> {user.backgroundUrl ? '更换背景' : '上传背景'}
+          </Button>
+          {user.backgroundUrl && (
+            <Button
+              variant="ghost"
+              pill
+              size="sm"
+              className="text-danger"
+              disabled={backgroundMut.isPending}
+              onClick={() => backgroundMut.mutate(null)}
+            >
+              移除
+            </Button>
+          )}
+          <span className="text-xs text-faint">宽幅横图最佳 · 上传前自动压缩</span>
+        </div>
+        <input
+          ref={bgFileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) backgroundUploadMut.mutate(f);
+            e.target.value = '';
+          }}
+        />
+      </section>
+
+      {/* 隐私 */}
+      <section className="border-b border-line px-4 py-5">
+        <h2 className="mb-4 text-lg font-extrabold">隐私</h2>
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-bold">
+              {user.likesPublic ? <Eye size={16} className="text-brand" /> : <EyeOff size={16} className="text-muted" />}
+              公开我的喜欢
+            </p>
+            <p className="mt-0.5 text-xs text-muted">
+              开启后其他用户可在你的主页查看你点赞过的帖子；关闭时仅自己可见。
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={Boolean(user.likesPublic)}
+            disabled={likesPublicMut.isPending}
+            onClick={() => likesPublicMut.mutate(!user.likesPublic)}
+            className={cn(
+              'relative h-7 w-12 shrink-0 rounded-full transition-colors',
+              user.likesPublic ? 'bg-brand' : 'bg-line-strong',
+            )}
+          >
+            <span
+              className={cn(
+                'absolute top-0.5 size-6 rounded-full bg-white shadow transition-all',
+                user.likesPublic ? 'left-[22px]' : 'left-0.5',
+              )}
+            />
+          </button>
+        </div>
+      </section>
 
       {/* 头像 */}
       <section className="border-b border-line px-4 py-5">
@@ -272,36 +405,55 @@ function SessionsSection() {
         </div>
       ) : (
         <div className="space-y-2">
-          {(data?.sessions ?? []).map((s) => (
-            <div
-              key={s.id}
-              className={cn(
-                'flex items-center gap-3 rounded-xl border border-line bg-surface px-3.5 py-3',
-                s.current && 'border-brand/50',
-              )}
-            >
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">
-                  {s.deviceInfo || '未知设备'}
-                  {s.current && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand">当前</span>}
-                </p>
-                <p className="mt-0.5 truncate text-xs text-muted">
-                  {s.ip ? `${s.ip} · ` : ''}登录于 {relativeTime(s.createdAt)}
-                </p>
+          {(data?.sessions ?? []).map((s) => {
+            const dev = describeDevice(s.device);
+            const Icon = dev.kind === 'mobile' ? Smartphone : dev.kind === 'tablet' ? Tablet : Laptop;
+            return (
+              <div
+                key={s.id}
+                className={cn(
+                  'flex items-center gap-3 rounded-xl border border-line bg-surface px-3.5 py-3',
+                  s.current && 'border-brand/50',
+                )}
+              >
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface2 text-ink">
+                  <Icon size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">
+                    {dev.label}
+                    {s.current && (
+                      <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand">当前</span>
+                    )}
+                  </p>
+                  <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted">
+                    <span className="font-semibold">{dev.browser}</span>
+                    <span className="text-faint">·</span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin size={11} /> {s.location || '位置未知'}
+                    </span>
+                    {s.colo && <span className="text-faint">· 节点 {s.colo}</span>}
+                    <span className="text-faint">·</span>
+                    <span className="font-mono">{s.ip || 'IP 未知'}</span>
+                  </p>
+                  <p className="mt-0.5 truncate text-xs text-faint">
+                    最近活跃 {relativeTime(s.lastUsedAt || s.loginAt)} · 登录于 {relativeTime(s.loginAt)}
+                  </p>
+                </div>
+                {!s.current && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-danger"
+                    disabled={revokeMut.isPending}
+                    onClick={() => revokeMut.mutate(s.id)}
+                  >
+                    下线
+                  </Button>
+                )}
               </div>
-              {!s.current && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-danger"
-                  disabled={revokeMut.isPending}
-                  onClick={() => revokeMut.mutate(s.id)}
-                >
-                  下线
-                </Button>
-              )}
-            </div>
-          ))}
+            );
+          })}
           {(data?.sessions ?? []).length === 0 && (
             <p className="text-sm text-muted">暂无其他设备记录</p>
           )}
@@ -309,4 +461,27 @@ function SessionsSection() {
       )}
     </section>
   );
+}
+
+/** 解析 User-Agent 为设备类型 / 浏览器名（与后端 device_info.ua 对应） */
+function describeDevice(ua: string): { kind: 'mobile' | 'tablet' | 'desktop'; label: string; browser: string } {
+  const s = ua || '';
+  const isTablet = /iPad|Tablet/i.test(s) || (/Android/i.test(s) && !/Mobile/i.test(s));
+  const isMobile = /iPhone|iPod|Mobile/i.test(s) || (/Android/i.test(s) && !isTablet);
+  const kind = isTablet ? 'tablet' : isMobile ? 'mobile' : 'desktop';
+  const label = isTablet ? '平板设备' : isMobile ? '手机设备' : '电脑设备';
+  const browser = /Edg\//.test(s)
+    ? 'Edge'
+    : /MicroMessenger/i.test(s)
+      ? '微信内置浏览器'
+      : /QQ\//i.test(s)
+        ? 'QQ 内置浏览器'
+        : /Chrome\//.test(s)
+          ? 'Chrome'
+          : /Firefox\//.test(s)
+            ? 'Firefox'
+            : /Safari\//.test(s)
+              ? 'Safari'
+              : '浏览器';
+  return { kind, label, browser };
 }

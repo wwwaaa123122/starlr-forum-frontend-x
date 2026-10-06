@@ -4,7 +4,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CalendarDays, Link2, MessageCircle, Pencil, Sparkles, Star, UserX } from 'lucide-react';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
-import { getUser, getUserPosts, getUserReplies, meLikes } from '@/lib/endpoints';
+import { getUser, getUserPosts, getUserReplies, meLikes, userLikes } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
 import { Avatar, Button, EmptyState, Skeleton, Tabs } from '@/components/ui/primitives';
 import { PostCard } from '@/components/post/PostCard';
@@ -47,12 +47,13 @@ export default function Profile() {
     getNextPageParam: (last) => (last.pagination.hasMore ? last.pagination.page + 1 : undefined),
     enabled: Boolean(profile) && tab === 'replies',
   });
+  const likesVisible = Boolean(isMe) || Boolean(profile?.likesPublic);
   const likesQuery = useInfiniteQuery({
-    queryKey: ['me-likes'],
-    queryFn: ({ pageParam }) => meLikes(pageParam, 20),
+    queryKey: ['likes', username],
+    queryFn: ({ pageParam }) => (isMe ? meLikes(pageParam, 20) : userLikes(username, pageParam, 20)),
     initialPageParam: 1,
     getNextPageParam: (last) => (last.pagination.hasMore ? last.pagination.page + 1 : undefined),
-    enabled: Boolean(isMe) && tab === 'likes',
+    enabled: Boolean(profile) && likesVisible && tab === 'likes',
   });
 
   const posts = useMemo(() => postsQuery.data?.pages.flatMap((p) => p.posts) ?? [], [postsQuery.data]);
@@ -109,19 +110,29 @@ export default function Profile() {
   const tabs = [
     { value: 'posts', label: '帖子', count: profile.postCount },
     { value: 'replies', label: '回复', count: profile.replyCount },
-    ...(isMe ? [{ value: 'likes', label: '喜欢' }] : []),
+    ...(likesVisible ? [{ value: 'likes', label: '喜欢' }] : []),
   ];
 
   return (
     <>
       <ColumnHeader back title={name} subtitle={`${formatCount(profile.postCount)} 帖子`} />
 
-      {/* Banner：星云渐变（原创占位，后续可扩展自定义 Banner） */}
-      <div className="relative h-[150px] md:h-[200px]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(58,210,159,0.12),transparent_50%)]" />
-        <div className="absolute inset-0 flex items-center justify-center opacity-40">
-          <img src="/icon-512.png" alt="" className="h-12 w-12 md:h-16 md:w-16 rounded-[25%]" />
-        </div>
+      {/* Banner：自定义背景图（未设置时用星云渐变占位） */}
+      <div className="relative h-[150px] bg-surface2 md:h-[200px]">
+        {profile.backgroundUrl ? (
+          <img
+            src={profile.backgroundUrl}
+            alt={`${name} 的主页背景`}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(58,210,159,0.12),transparent_50%)]" />
+            <div className="absolute inset-0 flex items-center justify-center opacity-40">
+              <img src="/icon-512.png" alt="" className="h-12 w-12 rounded-[25%] md:h-16 md:w-16" />
+            </div>
+          </>
+        )}
       </div>
 
       {/* 头像压边 + 操作按钮 */}
@@ -234,7 +245,7 @@ export default function Profile() {
           </>
         ))}
 
-      {tab === 'likes' && isMe &&
+      {tab === 'likes' && likesVisible &&
         (likesQuery.isLoading ? (
           <><PostSkeleton /><PostSkeleton /></>
         ) : likedPosts.length === 0 ? (

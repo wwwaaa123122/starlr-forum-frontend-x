@@ -201,7 +201,15 @@ export const meFavorites = (page = 1, pageSize = 20) =>
 export const meLikes = (page = 1, pageSize = 20) =>
   api<{ posts: PostSummary[]; pagination: Pagination }>(`/api/me/likes?page=${page}&pageSize=${pageSize}`);
 
-export const updateMe = (payload: { nickname?: string; bio?: string }) =>
+export const updateMe = (payload: {
+  nickname?: string;
+  bio?: string;
+  avatarUrl?: string | null;
+  /** 喜欢（点赞列表）是否公开 */
+  likesPublic?: boolean;
+  /** 主页背景图；null = 移除 */
+  backgroundUrl?: string | null;
+}) =>
   api<{ user: MeUser }>('/api/me', { method: 'PATCH', body: payload });
 
 export const changePassword = (payload: { currentPassword: string; newPassword: string }) =>
@@ -215,13 +223,25 @@ export const revokeOthers = () => api<unknown>('/api/me/sessions/revoke-others',
 
 /* ---------------- 上传 /api/upload ---------------- */
 
-export async function uploadImage(file: File, purpose: 'post' | 'reply' | 'avatar' | 'category'): Promise<string> {
+export async function uploadImage(
+  file: File,
+  purpose: 'post' | 'reply' | 'avatar' | 'category' | 'background',
+): Promise<string> {
+  // 上传前在浏览器压缩：背景图允许更长边（宽幅横图），头像默认即可
+  const { compressImage } = await import('./image-compress');
+  const { file: compressed } = await compressImage(file, purpose === 'background' ? { maxEdge: 2560 } : {});
   const form = new FormData();
-  form.append('file', file);
+  form.append('file', compressed);
   form.append('purpose', purpose);
   const res = await api<{ url: string; key?: string }>('/api/upload', { method: 'POST', body: form });
   return res.url;
 }
+
+/** 某用户的公开喜欢列表（本人不受限） */
+export const userLikes = (username: string, page = 1, pageSize = 20) =>
+  api<{ posts: PostSummary[]; pagination: Pagination }>(
+    `/api/users/${encodeURIComponent(username)}/likes?page=${page}&pageSize=${pageSize}`,
+  );
 
 /* ---------------- 举报 /api/reports ---------------- */
 

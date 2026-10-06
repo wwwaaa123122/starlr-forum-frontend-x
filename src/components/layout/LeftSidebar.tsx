@@ -19,7 +19,7 @@ import {
 import { useAuth } from '@/lib/auth';
 import { ShieldCheck } from 'lucide-react';
 import { Avatar, Button, Dropdown, MenuItem } from '@/components/ui/primitives';
-import { applyTheme } from '@/main';
+import { toggleTheme, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
@@ -47,18 +47,7 @@ export function LeftSidebar() {
     ...(user ? [{ to: `/u/${user.username}`, label: '我的主页', icon: UserIcon }] : []),
   ];
 
-  const isDark = document.documentElement.dataset.theme !== 'light';
-
-  const toggleTheme = () => {
-    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = next;
-    try {
-      localStorage.setItem('starlr.theme', next);
-    } catch {
-      /* ignore */
-    }
-    applyTheme();
-  };
+  const isDark = useTheme() === 'dark';
 
   return (
     <aside className="sticky top-0 hidden h-dvh shrink-0 flex-col justify-between px-1 py-2 md:flex md:w-[88px] xl:w-[275px]">
