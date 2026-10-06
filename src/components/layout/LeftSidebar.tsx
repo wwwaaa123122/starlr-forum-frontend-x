@@ -65,7 +65,7 @@ export function LeftSidebar() {
           className="btn-icon focus-ring my-0.5 h-13 w-13 p-3 hover:bg-surface2"
           aria-label="Starlr 首页"
         >
-          <img src="/starlr.svg" alt="Starlr" className="h-8 w-8" />
+          <img src="/icon-512.png" alt="Starlr" className="h-8 w-8 rounded-[25%]" />
         </Link>
 
         {/* 导航项 */}

@@ -1,7 +1,7 @@
 /** 注册页：用户名 / 邮箱 / 昵称 / 密码，成功后自动登录并提示邮箱验证 */
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AtSign, Loader2, MailCheck, ShieldAlert, UserPlus } from 'lucide-react';
+import { AtSign, Loader2, MailCheck, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
 import { Button, Input } from '@/components/ui/primitives';
@@ -71,7 +71,7 @@ export default function Register() {
       <div className="grid w-full max-w-4xl overflow-hidden md:grid-cols-2 md:rounded-2xl md:border md:border-line md:shadow-2xl">
         {/* 品牌区 */}
         <div className="relative hidden flex-col justify-between bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(255,200,87,0.12),transparent_55%)] p-10 md:flex">
-          <img src="/starlr.svg" alt="Starlr" className="h-12 w-12" />
+          <img src="/icon-512.png" alt="Starlr" className="h-12 w-12 rounded-[25%]" />
           <div>
             <h1 className="text-4xl font-black leading-tight tracking-tight">
               成为
@@ -90,11 +90,10 @@ export default function Register() {
         {/* 表单区 */}
         <div className="bg-canvas p-8 sm:p-10">
           <div className="mb-6 flex items-center gap-3 md:hidden">
-            <img src="/starlr.svg" alt="" className="h-9 w-9" />
+            <img src="/icon-512.png" alt="" className="h-9 w-9 rounded-[25%]" />
             <span className="text-xl font-black">Starlr</span>
           </div>
           <h2 className="text-2xl font-extrabold">注册</h2>
-          <p className="mt-1 text-sm text-muted">点亮你的第一颗星</p>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -148,10 +147,6 @@ export default function Register() {
               直接登录
             </Link>
           </div>
-          <p className="mt-6 flex items-start gap-1.5 text-xs leading-relaxed text-faint">
-            <ShieldAlert size={12} className="mt-0.5 shrink-0 text-star" />
-            密码以 PBKDF2 加密存储；本站不会向任何第三方透露你的邮箱。
-          </p>
         </div>
       </div>
     </div>

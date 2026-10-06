@@ -43,7 +43,7 @@ export default function Login() {
       <div className="grid w-full max-w-4xl overflow-hidden md:grid-cols-2 md:rounded-2xl md:border md:border-line md:shadow-2xl">
         {/* 品牌区 */}
         <div className="relative hidden flex-col justify-between bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(58,210,159,0.14),transparent_55%)] p-10 md:flex">
-          <img src="/starlr.svg" alt="Starlr" className="h-12 w-12" />
+          <img src="/icon-512.png" alt="Starlr" className="h-12 w-12 rounded-[25%]" />
           <div>
             <h1 className="text-4xl font-black leading-tight tracking-tight">
               这里是
@@ -62,11 +62,10 @@ export default function Login() {
         {/* 表单区 */}
         <div className="bg-canvas p-8 sm:p-10">
           <div className="mb-6 flex items-center gap-3 md:hidden">
-            <img src="/starlr.svg" alt="" className="h-9 w-9" />
+            <img src="/icon-512.png" alt="" className="h-9 w-9 rounded-[25%]" />
             <span className="text-xl font-black">Starlr</span>
           </div>
           <h2 className="text-2xl font-extrabold">登录</h2>
-          <p className="mt-1 text-sm text-muted">欢迎回到星海</p>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <label className="block">

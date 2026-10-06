@@ -62,11 +62,11 @@ export function ColumnHeader({
               {title}
             </h1>
           ) : (
-            <img src="/starlr.svg" alt="Starlr" className="h-7 w-7 md:hidden" />
+            <img src="/icon-512.png" alt="Starlr" className="h-7 w-7 md:hidden rounded-[25%]" />
           )}
           {subtitle && <p className="truncate text-[13px] text-muted">{subtitle}</p>}
         </div>
-        {showBrandOnMobile && <img src="/starlr.svg" alt="Starlr" className="h-7 w-7 md:hidden" />}
+        {showBrandOnMobile && <img src="/icon-512.png" alt="Starlr" className="h-7 w-7 md:hidden rounded-[25%]" />}
         {right}
       </div>
       {tabs && <div className="border-t border-line">{tabs}</div>}

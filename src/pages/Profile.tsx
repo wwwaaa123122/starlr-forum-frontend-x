@@ -120,7 +120,7 @@ export default function Profile() {
       <div className="relative h-[150px] md:h-[200px]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(58,210,159,0.12),transparent_50%)]" />
         <div className="absolute inset-0 flex items-center justify-center opacity-40">
-          <img src="/starlr.svg" alt="" className="h-12 w-12 md:h-16 md:w-16" />
+          <img src="/icon-512.png" alt="" className="h-12 w-12 md:h-16 md:w-16 rounded-[25%]" />
         </div>
       </div>
 

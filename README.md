@@ -52,7 +52,7 @@ frontend-x/src/
 │   ├── layout/
 │   │   ├── AppShell.tsx        # 三栏壳：<768 单栏 + 底栏；768–1280 图标栏；≥1280 全宽
 │   │   ├── LeftSidebar.tsx     # 导航 + 发帖按钮 + 主题切换 + 账号芯片（下拉菜单）
-│   │   ├── RightRail.tsx       # 搜索框 / 正在闪耀（热门标签）/ 星域导航 / 页脚
+│   │   ├── RightRail.tsx       # 搜索框 / 正在闪耀（热门标签）/ 板块导航 / 页脚
 │   │   ├── MobileTabBar.tsx    # 底部 5 tab + 悬浮发帖 FAB（<768）
 │   │   ├── MobileDrawer.tsx    # 侧滑抽屉（账号区 + 导航 + 主题 + 登出）
 │   │   └── ColumnHeader.tsx    # 中栏吸顶标题（返回/标题/副标题/tabs 槽位）
