@@ -1,5 +1,16 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
+import AdminLayout from '@/pages/admin/AdminLayout';
+import AdminOverview from '@/pages/admin/AdminOverview';
+import AdminUsers from '@/pages/admin/AdminUsers';
+import AdminPosts from '@/pages/admin/AdminPosts';
+import AdminCategories from '@/pages/admin/AdminCategories';
+import AdminReports from '@/pages/admin/AdminReports';
+import AdminViews from '@/pages/admin/AdminViews';
+import AdminNotify from '@/pages/admin/AdminNotify';
+import AdminModerators from '@/pages/admin/AdminModerators';
+import AdminAdmins from '@/pages/admin/AdminAdmins';
+import AdminAudit from '@/pages/admin/AdminAudit';
 import { useAuth } from '@/lib/auth';
 import { Spinner } from '@/components/ui/primitives';
 import Home from '@/pages/Home';
@@ -50,6 +61,18 @@ export default function App() {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverview />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="posts" element={<AdminPosts />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="views" element={<AdminViews />} />
+          <Route path="notify" element={<AdminNotify />} />
+          <Route path="moderators" element={<AdminModerators />} />
+          <Route path="admins" element={<AdminAdmins />} />
+          <Route path="audit" element={<AdminAudit />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppShell>

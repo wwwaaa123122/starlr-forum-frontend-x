@@ -17,6 +17,7 @@ import {
   UserPlus,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
+import { ShieldCheck } from 'lucide-react';
 import { Avatar, Button, Dropdown, MenuItem } from '@/components/ui/primitives';
 import { applyTheme } from '@/main';
 import { cn } from '@/lib/utils';
@@ -40,6 +41,9 @@ export function LeftSidebar() {
     { to: '/notifications', label: '通知', icon: Bell, badge: unread, requireAuth: true },
     { to: '/bookmarks', label: '书签', icon: Bookmark, requireAuth: true },
     { to: '/categories', label: '板块', icon: Hash },
+    ...(user && (user.role === 'admin' || user.role === 'moderator')
+      ? [{ to: '/admin', label: '管理后台', icon: ShieldCheck }]
+      : []),
     ...(user ? [{ to: `/u/${user.username}`, label: '我的主页', icon: UserIcon }] : []),
   ];
 
@@ -199,7 +203,10 @@ export function LeftSidebar() {
 }
 
 /** 移动端抽屉里复用的导航列表 */
-export function drawerNavItems(user: { username: string } | null, unread: number): NavItem[] {
+export function drawerNavItems(
+  user: { username: string; role?: string } | null,
+  unread: number,
+): NavItem[] {
   const items: NavItem[] = [
     { to: '/', label: '首页', icon: Home },
     { to: '/explore', label: '探索', icon: Compass },
@@ -207,6 +214,8 @@ export function drawerNavItems(user: { username: string } | null, unread: number
     { to: '/bookmarks', label: '书签', icon: Bookmark, requireAuth: true },
     { to: '/categories', label: '板块', icon: Hash },
   ];
+  if (user && (user.role === 'admin' || user.role === 'moderator'))
+    items.push({ to: '/admin', label: '管理后台', icon: ShieldCheck });
   if (user) items.push({ to: `/u/${user.username}`, label: '我的主页', icon: UserIcon });
   else items.push({ to: '/login', label: '登录', icon: LogIn }, { to: '/register', label: '注册', icon: UserPlus });
   return items;

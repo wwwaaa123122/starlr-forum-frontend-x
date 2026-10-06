@@ -215,7 +215,7 @@ export const revokeOthers = () => api<unknown>('/api/me/sessions/revoke-others',
 
 /* ---------------- 上传 /api/upload ---------------- */
 
-export async function uploadImage(file: File, purpose: 'post' | 'reply' | 'avatar'): Promise<string> {
+export async function uploadImage(file: File, purpose: 'post' | 'reply' | 'avatar' | 'category'): Promise<string> {
   const form = new FormData();
   form.append('file', file);
   form.append('purpose', purpose);
