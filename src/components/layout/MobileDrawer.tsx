@@ -20,10 +20,13 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
     };
   }, [open]);
 
+  // Hook 必须无条件调用：放在提前 return 之前，否则打开抽屉瞬间会因
+  // 「Rendered more hooks than during the previous render」崩溃黑屏
+  const isDark = useTheme() === 'dark';
+
   if (!open) return null;
 
   const items = drawerNavItems(user, unread);
-  const isDark = useTheme() === 'dark';
 
   const go = (to: string) => {
     onClose();
