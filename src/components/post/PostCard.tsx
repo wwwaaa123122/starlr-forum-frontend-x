@@ -146,7 +146,7 @@ export const PostCard = memo(function PostCard({
     >
       <div className="flex gap-3">
         <Link to={`/u/${post.authorName}`} onClick={(e) => e.stopPropagation()} className="shrink-0">
-          <Avatar src={post.authorAvatar} name={displayName(post.authorName)} size={42} />
+          <Avatar src={post.authorAvatar} name={displayName(post.authorNickname ?? post.authorName)} size={42} />
         </Link>
 
         <div className="min-w-0 flex-1">
@@ -157,7 +157,7 @@ export const PostCard = memo(function PostCard({
               onClick={(e) => e.stopPropagation()}
               className="truncate text-[15px] font-bold hover:underline"
             >
-              {displayName(post.authorName)}
+              {displayName(post.authorNickname ?? post.authorName)}
             </Link>
             {post.authorRole === 'admin' && (
               <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-brand">

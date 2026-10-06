@@ -37,6 +37,7 @@ export interface PostSummary {
   lastReplyAt: string | null;
   authorId: string;
   authorName: string;
+  authorNickname?: string | null;
   authorAvatar: string | null;
   authorRole?: string;
   categoryId?: string;
@@ -71,6 +72,7 @@ export interface Reply {
   liked?: number | boolean;
   authorId: string;
   authorName: string;
+  authorNickname?: string | null;
   authorAvatar: string | null;
   authorRole?: string;
 }

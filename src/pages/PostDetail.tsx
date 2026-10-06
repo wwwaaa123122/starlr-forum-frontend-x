@@ -159,14 +159,14 @@ export default function PostDetail() {
       <div className="px-4 pt-3">
         <div className="flex gap-3">
           <button onClick={() => navigate(`/u/${post.authorName}`)} className="shrink-0">
-            <Avatar src={post.authorAvatar} name={displayName(post.authorName)} size={44} />
+            <Avatar src={post.authorAvatar} name={displayName(post.authorNickname ?? post.authorName)} size={44} />
           </button>
           <div className="min-w-0">
             <button
               onClick={() => navigate(`/u/${post.authorName}`)}
               className="block text-[15px] font-bold leading-snug hover:underline"
             >
-              {displayName(post.authorName)}
+              {displayName(post.authorNickname ?? post.authorName)}
             </button>
             <p className="text-[15px] text-muted">@{post.authorName}</p>
           </div>

@@ -91,12 +91,12 @@ export function ReplyCard({
     >
       <div className="flex gap-3">
         <Link to={`/u/${reply.authorName}`} className="shrink-0">
-          <Avatar src={reply.authorAvatar} name={displayName(reply.authorName)} size={depth > 0 ? 34 : 40} />
+          <Avatar src={reply.authorAvatar} name={displayName(reply.authorNickname ?? reply.authorName)} size={depth > 0 ? 34 : 40} />
         </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1 text-[15px] leading-snug">
             <Link to={`/u/${reply.authorName}`} className="truncate font-bold hover:underline">
-              {displayName(reply.authorName)}
+              {displayName(reply.authorNickname ?? reply.authorName)}
             </Link>
             <span className="truncate text-muted">@{reply.authorName}</span>
             <span className="text-muted">·</span>
