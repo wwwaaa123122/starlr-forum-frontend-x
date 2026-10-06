@@ -1,11 +1,10 @@
-/** 移动端底部标签栏（<768px）+ 悬浮发帖 FAB */
+/** 移动端底部标签栏（<768px）+ 悬浮发帖 FAB；抽屉入口在中栏左上角（见 ColumnHeader） */
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, Bookmark, Compass, Home, PenLine, User as UserIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
-import { Avatar } from '@/components/ui/primitives';
 import { cn } from '@/lib/utils';
 
-export function MobileTabBar({ onOpenDrawer }: { onOpenDrawer: () => void }) {
+export function MobileTabBar() {
   const { user, unread } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,18 +56,6 @@ export function MobileTabBar({ onOpenDrawer }: { onOpenDrawer: () => void }) {
             </Link>
           );
         })}
-        {/* 抽屉按钮（更多） */}
-        <button
-          onClick={onOpenDrawer}
-          aria-label="更多"
-          className="btn-icon focus-ring m-auto h-12 w-16 text-muted hover:text-ink"
-        >
-          {user ? (
-            <Avatar src={user.avatarUrl} name={user.nickname || user.username} size={28} />
-          ) : (
-            <UserIcon size={25} strokeWidth={1.9} />
-          )}
-        </button>
       </nav>
     </>
   );

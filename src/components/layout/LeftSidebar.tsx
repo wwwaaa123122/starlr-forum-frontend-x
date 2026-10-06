@@ -98,9 +98,9 @@ export function LeftSidebar() {
           })}
         </nav>
 
-        {/* 发帖按钮 */}
-        <div className="mt-3 w-full px-1 xl:px-2">
-          {user ? (
+        {/* 发帖按钮（仅登录用户） */}
+        {user && (
+          <div className="mt-3 w-full px-1 xl:px-2">
             <Button
               pill
               size="lg"
@@ -111,20 +111,8 @@ export function LeftSidebar() {
               <span className="hidden xl:inline">发帖</span>
               <PenLine size={22} className="xl:hidden" />
             </Button>
-          ) : (
-            <Button
-              pill
-              size="lg"
-              variant="outline"
-              className="h-13 w-full max-w-[52px] text-lg xl:max-w-none"
-              onClick={() => navigate('/login')}
-              aria-label="登录"
-            >
-              <span className="hidden xl:inline">登录</span>
-              <LogIn size={22} className="xl:hidden" />
-            </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* 底部账号芯片 / 主题切换 */}
@@ -193,16 +181,17 @@ export function LeftSidebar() {
             )}
           </Dropdown>
         ) : (
-          <button
+          <Button
+            pill
+            size="lg"
+            variant="primary"
+            className="h-13 w-full max-w-[52px] text-lg xl:max-w-none"
             onClick={() => navigate('/login')}
-            className="focus-ring flex w-full items-center gap-3 rounded-full p-2 transition hover:bg-surface2 xl:px-3"
+            aria-label="登录"
           >
-            <Avatar name="游客" size={40} />
-            <span className="hidden flex-col items-start leading-tight xl:flex">
-              <span className="text-[15px] font-bold">未登录</span>
-              <span className="text-sm text-brand">登录 / 注册</span>
-            </span>
-          </button>
+            <span className="hidden xl:inline">登录 / 注册</span>
+            <LogIn size={22} className="xl:hidden" />
+          </Button>
         )}
       </div>
     </aside>

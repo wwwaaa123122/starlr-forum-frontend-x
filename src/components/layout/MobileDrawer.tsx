@@ -48,22 +48,19 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
             </span>
           </Link>
         ) : (
-          <div className="mb-6 flex items-center gap-3">
-            <Avatar name="游客" size={48} />
-            <div className="flex flex-col gap-1.5">
-              <button
-                onClick={() => go('/login')}
-                className="flex items-center gap-1.5 text-[15px] font-bold text-brand"
-              >
-                <LogIn size={16} /> 登录
-              </button>
-              <button
-                onClick={() => go('/register')}
-                className="flex items-center gap-1.5 text-[15px] font-bold text-brand"
-              >
-                <UserPlus size={16} /> 注册
-              </button>
-            </div>
+          <div className="mb-6 flex items-center gap-2.5">
+            <button
+              onClick={() => go('/login')}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-brand py-2.5 text-[15px] font-bold text-white transition hover:bg-brand-hover"
+            >
+              <LogIn size={16} /> 登录
+            </button>
+            <button
+              onClick={() => go('/register')}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-line-strong py-2.5 text-[15px] font-bold text-ink transition hover:bg-surface2"
+            >
+              <UserPlus size={16} /> 注册
+            </button>
           </div>
         )}
 

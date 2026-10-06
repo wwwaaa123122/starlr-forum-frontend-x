@@ -32,40 +32,42 @@
 
 :root,
 [data-theme='dark'] {
-  --sl-canvas: #070912;
-  --sl-surface: #0d1020;
-  --sl-surface2: #151a30;
-  --sl-line: #20263f;
-  --sl-line-strong: #2c3352;
-  --sl-ink: #e9edff;
-  --sl-muted: #98a0c6;
-  --sl-faint: #646d94;
-  --sl-brand: #7c6cff;
-  --sl-brand-hover: #6a58f5;
-  --sl-brand-soft: rgba(124, 108, 255, 0.14);
-  --sl-star: #ffc857;
-  --sl-like: #f45b8f;
-  --sl-boost: #3ad29f;
-  --sl-danger: #f45b6f;
+  /* X（Twitter）暗色官方色板 */
+  --sl-canvas: #000000;
+  --sl-surface: #16181c;
+  --sl-surface2: #202327;
+  --sl-line: #2f3336;
+  --sl-line-strong: #536471;
+  --sl-ink: #e7e9ea;
+  --sl-muted: #71767b;
+  --sl-faint: #536471;
+  --sl-brand: #1d9bf0;
+  --sl-brand-hover: #1a8cd8;
+  --sl-brand-soft: rgba(29, 155, 240, 0.14);
+  --sl-star: #1d9bf0;
+  --sl-like: #f91880;
+  --sl-boost: #00ba7c;
+  --sl-danger: #f4212e;
   color-scheme: dark;
 }
 
 [data-theme='light'] {
+  /* X（Twitter）亮色官方色板 */
   --sl-canvas: #ffffff;
-  --sl-surface: #f6f7fd;
-  --sl-surface2: #eef0fa;
-  --sl-line: #e3e6f2;
-  --sl-line-strong: #cdd2e6;
-  --sl-ink: #12142b;
-  --sl-muted: #5d6486;
-  --sl-faint: #8d93b0;
-  --sl-brand: #6a58f5;
-  --sl-brand-hover: #5b48e8;
-  --sl-brand-soft: rgba(106, 88, 245, 0.1);
-  --sl-star: #d9930d;
-  --sl-like: #e63978;
-  --sl-boost: #0f9f74;
-  --sl-danger: #e5484d;
+  --sl-surface: #f7f9f9;
+  --sl-surface2: #eff3f4;
+  --sl-line: #eff3f4;
+  --sl-line-strong: #cfd9de;
+  --sl-ink: #0f1419;
+  --sl-muted: #536471;
+  --sl-faint: #8b98a5;
+  --sl-brand: #1d9bf0;
+  --sl-brand-hover: #1a8cd8;
+  --sl-brand-soft: rgba(29, 155, 240, 0.1);
+  --sl-star: #1d9bf0;
+  --sl-like: #f91880;
+  --sl-boost: #00ba7c;
+  --sl-danger: #f4212e;
   color-scheme: light;
 }
 
@@ -89,7 +91,7 @@ body {
 }
 
 ::selection {
-  background: rgba(124, 108, 255, 0.35);
+  background: rgba(29, 155, 240, 0.3);
 }
 
 /* 细滚动条 */
@@ -228,23 +230,23 @@ body {
   margin: 1.2em 0;
 }
 
-/* highlight.js 语法高亮（星图配色） */
+/* highlight.js 语法高亮（GitHub Dark 中性配色） */
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-literal {
-  color: #b39cff;
+  color: #ff7b72;
 }
 .hljs-string,
 .hljs-attr {
-  color: #7fe3c3;
+  color: #a5d6ff;
 }
 .hljs-number,
 .hljs-symbol {
-  color: #ffc857;
+  color: #79c0ff;
 }
 .hljs-comment,
 .hljs-quote {
-  color: #646d94;
+  color: #8b949e;
   font-style: italic;
 }
 .hljs-title,
