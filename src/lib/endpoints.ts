@@ -53,6 +53,21 @@ export interface AuthResponse extends Record<string, unknown> {
 export const exchangeOAuth = (code: string) =>
   api<AuthResponse>('/api/auth/oauth/exchange', { method: 'POST', body: { code }, retryOn401: false });
 
+/** 已登录状态下发起 GitHub 绑定：拿一次性 bind token（10 分钟） */
+export const bindGithubIntent = () =>
+  api<{ bindToken: string; expiresIn: number }>('/api/auth/oauth/bind-intent', { method: 'POST' });
+
+/** 解绑 GitHub（需密码确认）；返回刷新后的用户信息 */
+export const unbindGithub = (password: string) =>
+  api<{ success: true; user: AuthResponse['user'] }>('/api/auth/oauth/github/unbind', {
+    method: 'POST',
+    body: { password },
+  });
+
+/** 已登录用户的 GitHub 绑定入口 URL（带一次性 bind token） */
+export const githubOAuthBindUrl = (bindToken: string) =>
+  `${API_BASE}/oauth/start/github?bind=${encodeURIComponent(bindToken)}`;
+
 /** GitHub 授权入口（同源走相对路径；f 站自动指到 i.182030.xyz） */
 export const githubOAuthStartUrl = () =>
   `${API_BASE}/oauth/start/github?redirect=${encodeURIComponent(window.location.origin)}`;

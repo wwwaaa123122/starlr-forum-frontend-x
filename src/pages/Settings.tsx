@@ -21,7 +21,18 @@ import {
 import { toast } from 'sonner';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
 import { ImageCropDialog } from '@/components/ui/ImageCropDialog';
-import { changePassword, revokeOthers, revokeSession, updateMe, uploadImage } from '@/lib/endpoints';
+import {
+  bindGithubIntent,
+  changePassword,
+  githubOAuthBindUrl,
+  revokeOthers,
+  revokeSession,
+  unbindGithub,
+  updateMe,
+  uploadImage,
+} from '@/lib/endpoints';
+import { GithubIcon } from '@/components/GithubIcon';
+import type { MeUser } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
 import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primitives';
 import { assetUrl } from '@/lib/base-url';
@@ -284,6 +295,8 @@ export default function Settings() {
         </div>
       </section>
 
+      <GithubBindingSection />
+
       <PasswordSection />
 
       <ImageCropDialog
@@ -342,6 +355,87 @@ export default function Settings() {
 }
 
 /* ---------------- 修改密码 ---------------- */
+
+
+/** 账号绑定：GitHub（绑定走 OAuth 跳转，解绑需密码确认） */
+function GithubBindingSection() {
+  const { user, setUser } = useAuth();
+  const bound = Boolean(user?.hasGithub);
+  const [confirming, setConfirming] = useState(false);
+  const [password, setPassword] = useState('');
+
+  const bindMut = useMutation({
+    mutationFn: async () => {
+      const { bindToken } = await bindGithubIntent();
+      window.location.href = githubOAuthBindUrl(bindToken);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : '发起绑定失败'),
+  });
+
+  const unbindMut = useMutation({
+    mutationFn: () => unbindGithub(password),
+    onSuccess: (res) => {
+      setUser(res.user as unknown as MeUser);
+      toast.success('已解绑 GitHub');
+      setConfirming(false);
+      setPassword('');
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : '解绑失败'),
+  });
+
+  return (
+    <section className="border-b border-line px-4 py-5">
+      <h2 className="mb-4 text-lg font-extrabold">账号绑定</h2>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex size-9 items-center justify-center rounded-full border border-line">
+            <GithubIcon size={18} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-bold">GitHub</p>
+            <p className="truncate text-[13px] text-muted">
+              {bound ? '已绑定，登录页可直接用 GitHub 登录' : '绑定后可在登录页使用 GitHub 一键登录'}
+            </p>
+          </div>
+        </div>
+        {bound ? (
+          <Button size="sm" variant="ghost" disabled={unbindMut.isPending} onClick={() => setConfirming((v) => !v)}>
+            解绑
+          </Button>
+        ) : (
+          <Button pill size="sm" disabled={bindMut.isPending} onClick={() => bindMut.mutate()}>
+            {bindMut.isPending ? <Loader2 size={14} className="animate-spin" /> : <GithubIcon size={14} />} 绑定
+          </Button>
+        )}
+      </div>
+      {confirming && (
+        <form
+          className="mt-3 rounded-xl border border-line bg-surface2 p-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!password) return toast.error('请输入密码');
+            unbindMut.mutate();
+          }}
+        >
+          <p className="mb-2 text-[13px] text-muted">为防止盗号解绑，请输入当前账号密码确认（GitHub 注册、未设置过密码的账号暂无法解绑）。</p>
+          <div className="flex gap-2">
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="账号密码"
+              autoComplete="current-password"
+              className="flex-1"
+            />
+            <Button pill disabled={unbindMut.isPending}>
+              {unbindMut.isPending ? <Loader2 size={14} className="animate-spin" /> : null} 确认解绑
+            </Button>
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
 
 function PasswordSection() {
   const [current, setCurrent] = useState('');

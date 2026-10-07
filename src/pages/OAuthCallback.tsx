@@ -22,7 +22,8 @@ export default function OAuthCallback() {
     void (async () => {
       try {
         await oauthExchange(code);
-        navigate('/', { replace: true });
+        const next = params.get('next');
+        navigate(next && next.startsWith('/') ? next : '/', { replace: true });
       } catch (err) {
         setError(err instanceof Error ? err.message : '登录失败，请重试');
       }

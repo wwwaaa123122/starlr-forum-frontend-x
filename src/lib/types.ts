@@ -112,6 +112,8 @@ export interface MeUser extends UserProfile {
   emailVerified: boolean;
   accountStatus: 'active' | 'unverified' | 'banned';
   email?: string;
+  /** 是否已绑定 GitHub */
+  hasGithub?: boolean;
 }
 
 export interface UserSearchItem {
