@@ -24,6 +24,7 @@ import { ImageCropDialog } from '@/components/ui/ImageCropDialog';
 import { changePassword, revokeOthers, revokeSession, updateMe, uploadImage } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
 import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primitives';
+import { assetUrl } from '@/lib/base-url';
 import { cn, displayName, relativeTime } from '@/lib/utils';
 
 export default function Settings() {
@@ -132,7 +133,7 @@ export default function Settings() {
           )}
         >
           {user.backgroundUrl ? (
-            <img src={user.backgroundUrl} alt="主页背景图" className="h-full w-full object-cover" />
+            <img src={assetUrl(user.backgroundUrl)} alt="主页背景图" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center text-sm text-faint">
               尚未设置 · 将显示在你的主页顶部

@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { assetUrl } from '@/lib/base-url';
 
 /* ---------------- Button ---------------- */
 
@@ -111,7 +112,7 @@ export function Avatar({
     >
       {src && !failed ? (
         <img
-          src={src}
+          src={assetUrl(src)}
           alt={name}
           width={size}
           height={size}

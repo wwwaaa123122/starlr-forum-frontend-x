@@ -4,6 +4,7 @@
  * 主题跟随 Starlr 的 data-theme（dark/light）。
  */
 import { useEffect, useRef, useState } from 'react';
+import { API_BASE } from '@/lib/base-url';
 
 declare global {
   interface Window {
@@ -95,7 +96,7 @@ let configCache: { turnstileSiteKey: string | null } | null = null;
 export async function fetchSiteConfig(): Promise<{ turnstileSiteKey: string | null }> {
   if (configCache) return configCache;
   try {
-    const res = await fetch('/api/config');
+    const res = await fetch(`${API_BASE}/api/config`);
     configCache = (await res.json()) as { turnstileSiteKey: string | null };
   } catch {
     configCache = { turnstileSiteKey: null };

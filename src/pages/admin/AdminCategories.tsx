@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { Button, Input, Modal, Skeleton } from '@/components/ui/primitives';
 import { listCategories, uploadImage } from '@/lib/endpoints';
+import { assetUrl } from '@/lib/base-url';
 import type { Category } from '@/lib/types';
 import { ConfirmModal, Field, TableWrap, Td, Th } from './shared';
 
@@ -17,7 +18,7 @@ const CATEGORY_EMOJIS = [
 
 function CategoryIcon({ icon, size = 20 }: { icon: string; size?: number }) {
   if (/^(https?:\/\/|\/api\/)/.test(icon)) {
-    return <img src={icon} alt="" className="rounded-md object-cover" style={{ width: size, height: size }} />;
+    return <img src={assetUrl(icon)} alt="" className="rounded-md object-cover" style={{ width: size, height: size }} />;
   }
   return (
     <span className="inline-flex items-center justify-center" style={{ width: size, height: size, fontSize: size * 0.8 }}>

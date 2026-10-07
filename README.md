@@ -51,6 +51,17 @@ X 风格管理后台，完整复刻经典版（i.182030.xyz/admin）全部功能
 
 入口：左侧栏/抽屉「管理后台」（仅版主及以上可见）；可访问域名 x.182030.xyz / forum.182030.xyz。
 
+## 部署矩阵（2026-10-07 起）
+
+| 域名 | Worker | 说明 |
+|---|---|---|
+| x.182030.xyz / forum.182030.xyz | `xingchen-forum-x` | 网页 + 同源 API（`npm run build` → `dist`，部署 `backend/wrangler.x.jsonc`） |
+| f.182030.xyz | `forum-frontend` | **纯前端**（`npm run build:frontend` → `dist-f`，部署 `backend/wrangler.frontend.jsonc`），浏览器跨域直连独立后端 |
+| i.182030.xyz | `forum-backend` | 纯 API（部署 `backend/wrangler.backend.jsonc`）；根路径与未定义页面一律空 404 |
+
+- f 站构建注入 `VITE_API_BASE=https://i.182030.xyz`：API 请求与 `/api/...` 图片、Markdown 链接、Turnstile 配置全部指向后端；后端 `ALLOWED_ORIGINS=https://f.182030.xyz` 放行 CORS。
+- 同源部署（x）不设置该变量，行为不变。
+
 ## 目录结构
 
 ```

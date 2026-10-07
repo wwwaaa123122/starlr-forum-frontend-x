@@ -1,4 +1,5 @@
 /** 统一 API 客户端：Bearer 注入、401 单飞刷新重试、统一错误解析 */
+import { API_BASE } from './base-url';
 
 export class ApiClientError extends Error {
   status: number;
@@ -44,7 +45,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     const isForm = typeof FormData !== 'undefined' && body instanceof FormData;
     if (body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
     if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`;
-    return fetch(path, {
+    return fetch(`${API_BASE}${path}`, {
       method,
       headers,
       body: isForm ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,

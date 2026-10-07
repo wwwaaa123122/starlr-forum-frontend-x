@@ -10,6 +10,7 @@ import { Avatar, Button, EmptyState, Skeleton, Tabs } from '@/components/ui/prim
 import { PostCard } from '@/components/post/PostCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
 import { ReplyCard } from '@/components/post/ReplyCard';
+import { assetUrl } from '@/lib/base-url';
 import { cn, displayName, formatCount, joinedMonth } from '@/lib/utils';
 
 export default function Profile() {
@@ -121,7 +122,7 @@ export default function Profile() {
       <div className="relative h-[150px] bg-surface2 md:h-[200px]">
         {profile.backgroundUrl ? (
           <img
-            src={profile.backgroundUrl}
+            src={assetUrl(profile.backgroundUrl)}
             alt={`${name} 的主页背景`}
             className="absolute inset-0 h-full w-full object-cover"
           />

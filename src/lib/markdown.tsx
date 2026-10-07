@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import rehypeHighlight from 'rehype-highlight';
 import { cn } from './utils';
+import { assetUrl } from '@/lib/base-url';
 
 /** 仅允许 http/https/mailto 协议的链接（与后端 CSP 约定一致） */
 const schema = {
@@ -31,7 +32,7 @@ export const RichText = memo(function RichText({ content, className }: RichTextP
         ]}
         components={{
           a: ({ href, children }) => (
-            <a href={href} target="_blank" rel="noopener noreferrer nofollow">
+            <a href={assetUrl(href)} target="_blank" rel="noopener noreferrer nofollow">
               {children}
             </a>
           ),
