@@ -59,7 +59,7 @@ export default function App() {
         <Route path="/post/:id" element={<PostDetail />} />
         <Route path="/u/:username" element={<Profile />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/oauth/github/done" element={<OAuthCallback />} />
+        <Route path="/auth/github/done" element={<OAuthCallback />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/register" element={<Register />} />
