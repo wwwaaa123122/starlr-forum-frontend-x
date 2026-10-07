@@ -8,6 +8,7 @@ import AdminCategories from '@/pages/admin/AdminCategories';
 import AdminReports from '@/pages/admin/AdminReports';
 import AdminViews from '@/pages/admin/AdminViews';
 import AdminNotify from '@/pages/admin/AdminNotify';
+import AdminServices from '@/pages/admin/AdminServices';
 import AdminModerators from '@/pages/admin/AdminModerators';
 import AdminAdmins from '@/pages/admin/AdminAdmins';
 import AdminAudit from '@/pages/admin/AdminAudit';
@@ -70,6 +71,7 @@ export default function App() {
           <Route path="categories" element={<AdminCategories />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="views" element={<AdminViews />} />
+          <Route path="services" element={<AdminServices />} />
           <Route path="notify" element={<AdminNotify />} />
           <Route path="moderators" element={<AdminModerators />} />
           <Route path="admins" element={<AdminAdmins />} />

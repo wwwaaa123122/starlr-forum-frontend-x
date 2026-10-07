@@ -20,6 +20,7 @@ const SECTIONS: Section[] = [
   { to: '/admin/categories', label: '板块' },
   { to: '/admin/reports', label: '举报' },
   { to: '/admin/views', label: '浏览统计' },
+  { to: '/admin/services', label: '服务配置', adminOnly: true },
   { to: '/admin/notify', label: '通知', adminOnly: true },
   { to: '/admin/moderators', label: '版主', adminOnly: true },
   { to: '/admin/admins', label: '管理员', adminOnly: true },
