@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { applySeo } from '@/lib/seo';
 import { AppShell } from '@/components/layout/AppShell';
 import AdminLayout from '@/pages/admin/AdminLayout';
 import AdminOverview from '@/pages/admin/AdminOverview';
@@ -46,9 +48,19 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** 路由级 SEO 兜底：每次导航更新 canonical/description（页面可随后用 applySeo 增强） */
+function SeoBridge() {
+  const location = useLocation();
+  useEffect(() => {
+    applySeo({ path: `${location.pathname}${location.search}` });
+  }, [location.pathname, location.search]);
+  return null;
+}
+
 export default function App() {
   return (
     <AppShell>
+      <SeoBridge />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />

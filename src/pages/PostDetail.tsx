@@ -15,6 +15,7 @@ import {
 } from '@/lib/endpoints';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
 import { useAuth } from '@/lib/auth';
+import { applySeo } from '@/lib/seo';
 import { ActionButton } from '@/components/post/PostCard';
 import { Composer } from '@/components/post/Composer';
 import { ReplyCard } from '@/components/post/ReplyCard';
@@ -108,7 +109,14 @@ export default function PostDetail() {
   });
 
   useEffect(() => {
-    document.title = post ? `${post.title} - Starlr Forum` : 'Starlr';
+    applySeo({
+      title: post ? `${post.title} - 星辰旅人论坛` : '星辰旅人论坛',
+      description: post?.content
+        ? post.content.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`~\-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 150)
+        : undefined,
+      path: post ? `/post/${post.id}` : undefined,
+      ogType: 'article',
+    });
   }, [post]);
 
   /* 楼中楼：parentReplyId 分组 */

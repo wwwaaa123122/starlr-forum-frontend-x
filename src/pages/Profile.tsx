@@ -6,6 +6,7 @@ import { CalendarDays, Link2, MessageCircle, Pencil, Sparkles, Star, UserX } fro
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
 import { getUser, getUserPosts, getUserReplies, meLikes, userLikes } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
+import { applySeo } from '@/lib/seo';
 import { Avatar, Button, EmptyState, Skeleton, Tabs } from '@/components/ui/primitives';
 import { PostCard } from '@/components/post/PostCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
@@ -31,7 +32,11 @@ export default function Profile() {
   const profile = data?.user;
 
   useEffect(() => {
-    document.title = profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - Starlr Forum` : 'Starlr';
+    applySeo({
+      title: profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - 星辰旅人论坛` : '星辰旅人论坛',
+      description: profile?.bio ?? undefined,
+      path: profile ? `/u/${encodeURIComponent(profile.username)}` : undefined,
+    });
   }, [profile]);
 
   const postsQuery = useInfiniteQuery({
