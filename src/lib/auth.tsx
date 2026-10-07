@@ -17,7 +17,7 @@ import {
   registerRefreshHandler,
   storeTokens,
 } from './api';
-import { unreadCount, fetchMe, login as loginApi, register as registerApi, logout as logoutApi, refreshTokens } from './endpoints';
+import { unreadCount, fetchMe, login as loginApi, register as registerApi, logout as logoutApi, refreshTokens, exchangeOAuth } from './endpoints';
 import type { AuthResponse, AuthUserPayload } from './endpoints';
 import type { MeUser } from './types';
 
@@ -36,6 +36,8 @@ interface AuthContextValue {
     turnstileToken?: string;
   }) => Promise<AuthUserPayload>;
   logout: () => Promise<void>;
+  /** GitHub OAuth 一次性 code 兑换登录态 */
+  oauthExchange: (code: string) => Promise<AuthUserPayload>;
   refreshUnread: () => Promise<void>;
   setUser: (user: MeUser | null) => void;
 }
@@ -148,6 +150,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applyTokens, scheduleRefresh, refreshUnread],
   );
 
+  const oauthExchange = useCallback(
+    async (code: string) => {
+      const res = await exchangeOAuth(code);
+      applyTokens(res);
+      const me = await fetchMe().catch(() => null);
+      setUser(me?.user ?? (res.user as MeUser));
+      scheduleRefresh();
+      void refreshUnread();
+      return res.user;
+    },
+    [applyTokens, scheduleRefresh, refreshUnread],
+  );
+
   const register = useCallback(
     async (payload: { username: string; email: string; password: string; nickname?: string; turnstileToken?: string }) => {
       const res = await registerApi(payload);
@@ -174,8 +189,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, loading: false, bootstrapping, unread, login, register, logout, refreshUnread, setUser }),
-    [user, bootstrapping, unread, login, register, logout, refreshUnread],
+    () => ({ user, loading: false, bootstrapping, unread, login, register, logout, oauthExchange, refreshUnread, setUser }),
+    [user, bootstrapping, unread, login, register, logout, oauthExchange, refreshUnread],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

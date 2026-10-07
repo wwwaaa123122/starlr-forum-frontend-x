@@ -1,5 +1,6 @@
 /** 类型化端点封装：与 backend/src/routes 一一对应 */
 import { api } from './api';
+import { API_BASE } from './base-url';
 import type {
   Category,
   MeUser,
@@ -47,6 +48,14 @@ export interface AuthResponse extends Record<string, unknown> {
   refreshToken: string;
   tokenType?: string;
 }
+
+/** GitHub OAuth：一次性 code 兑换本站 token（重试关闭：code 一次性） */
+export const exchangeOAuth = (code: string) =>
+  api<AuthResponse>('/api/auth/oauth/exchange', { method: 'POST', body: { code }, retryOn401: false });
+
+/** GitHub 授权入口（同源走相对路径；f 站自动指到 i.182030.xyz） */
+export const githubOAuthStartUrl = () =>
+  `${API_BASE}/oauth/github/start?redirect=${encodeURIComponent(window.location.origin)}`;
 
 export const login = (identifier: string, password: string, turnstileToken?: string) =>
   api<AuthResponse>('/api/auth/login', {
