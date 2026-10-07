@@ -55,7 +55,7 @@ export const exchangeOAuth = (code: string) =>
 
 /** GitHub 授权入口（同源走相对路径；f 站自动指到 i.182030.xyz） */
 export const githubOAuthStartUrl = () =>
-  `${API_BASE}/oauth/github/start?redirect=${encodeURIComponent(window.location.origin)}`;
+  `${API_BASE}/oauth/start/github?redirect=${encodeURIComponent(window.location.origin)}`;
 
 export const login = (identifier: string, password: string, turnstileToken?: string) =>
   api<AuthResponse>('/api/auth/login', {
