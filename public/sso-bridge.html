@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>星辰旅人论坛 · 登录状态桥接</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f6f7f9; color: #1f2328;
+    }
+    @media (prefers-color-scheme: dark) { body { background: #16181d; color: #e6e8eb; } }
+    main { text-align: center; padding: 24px; }
+    .logo { font-size: 34px; }
+    h1 { font-size: 16px; margin: 10px 0 6px; }
+    p { font-size: 13px; opacity: .75; margin: 4px 0; }
+    .spin {
+      display: inline-block; width: 18px; height: 18px; margin-bottom: 10px;
+      border: 2px solid rgba(127,127,127,.35); border-top-color: #4c8dff; border-radius: 50%;
+      animation: r .8s linear infinite;
+    }
+    @keyframes r { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="logo">🌟</div>
+    <h1>星辰旅人论坛 · 登录状态桥接</h1>
+    <p><span class="spin"></span></p>
+    <p id="status">正在等待登录同步请求…</p>
+    <p>本页面仅用于第三方站点（如 MC 免端口域名生成器）同步论坛登录状态，请勿直接访问。</p>
+  </main>
+  <script>
+    (function () {
+      'use strict';
+      // 允许请求登录状态的站点白名单：只有这些源发起的握手才会得到响应。
+      var ALLOWED_ORIGINS = [
+        'https://zako.mom',
+        'http://127.0.0.1:8788', // 本地开发
+        'http://localhost:8788'
+      ];
+      var ACCESS_KEY = 'starlr.access';
+      var REFRESH_KEY = 'starlr.refresh';
+      var statusEl = document.getElementById('status');
+      var spinner = document.querySelector('.spin');
+
+      function setStatus(text) {
+        if (statusEl) statusEl.textContent = text;
+        if (spinner && text) spinner.style.display = 'none';
+      }
+
+      function reply(source, origin, payload) {
+        try { source.postMessage(payload, { targetOrigin: origin }); } catch (e) { /* ignore */ }
+      }
+
+      function parseJwtPayload(jwt) {
+        try {
+          var p = jwt.split('.')[1];
+          p += '='.repeat(p.length % 4 === 0 ? 0 : 4 - (p.length % 4));
+          return JSON.parse(decodeURIComponent(escape(atob(p.replace(/-/g, '+').replace(/_/g, '/')))));
+        } catch (e) { return null; }
+      }
+
+      function bearerGet(path, token) {
+        return fetch(path, { headers: { Authorization: 'Bearer ' + token } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .catch(function () { return null; });
+      }
+
+      /**
+       * 汇总本站（论坛前端自身源，第一方上下文）的登录状态：
+       * 1) 优先用现有 access token 调 /api/auth/me；
+       * 2) 失效则用 refresh token 同源续期并写回（保持论坛自身登录态最新），再取一次资料。
+       */
+      function collectSession() {
+        var access = localStorage.getItem(ACCESS_KEY) || '';
+        var refresh = localStorage.getItem(REFRESH_KEY) || '';
+        if (!access && !refresh) {
+          return Promise.resolve({ ok: false, error: 'NOT_LOGGED_IN' });
+        }
+        var me = access ? bearerGet('/api/auth/me', access) : Promise.resolve(null);
+        return me.then(function (res) {
+          if (res && res.user) {
+            return { ok: true, user: res.user, accessToken: access, refreshToken: refresh || null };
+          }
+          if (!refresh) return { ok: false, error: 'SESSION_INVALID' };
+          return fetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken: refresh })
+          })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; })
+            .then(function (tokens) {
+              if (!tokens || !tokens.accessToken) return { ok: false, error: 'SESSION_INVALID' };
+              localStorage.setItem(ACCESS_KEY, tokens.accessToken);
+              if (tokens.refreshToken) localStorage.setItem(REFRESH_KEY, tokens.refreshToken);
+              return bearerGet('/api/auth/me', tokens.accessToken).then(function (me2) {
+                if (!me2 || !me2.user) return { ok: false, error: 'SESSION_INVALID' };
+                return {
+                  ok: true,
+                  user: me2.user,
+                  accessToken: tokens.accessToken,
+                  refreshToken: tokens.refreshToken || null
+                };
+              });
+            });
+        });
+      }
+
+      window.addEventListener('message', function (e) {
+        if (e.origin === window.location.origin) return; // 只接受跨站父页面握手
+        if (ALLOWED_ORIGINS.indexOf(e.origin) === -1) return; // 非白名单源一律不响应
+        if (!e.data || e.data.type !== 'starlr-sso-request') return;
+        setStatus('正在核对论坛登录状态…');
+        collectSession().then(function (result) {
+          if (!result.ok) {
+            setStatus(result.error === 'NOT_LOGGED_IN' ? '论坛未登录' : '论坛登录状态已失效');
+          } else {
+            var u = result.user || {};
+            setStatus('已找到登录状态：@' + (u.username || '?'));
+          }
+          reply(e.source, e.origin, {
+            type: 'starlr-sso-response',
+            ok: !!result.ok,
+            error: result.error || null,
+            user: result.ok ? result.user : null,
+            accessToken: result.ok ? result.accessToken : null,
+            refreshToken: result.ok ? result.refreshToken : null
+          });
+        });
+      });
+
+      // 直接访问（无握手）时给出说明
+      setTimeout(function () {
+        if (statusEl && statusEl.textContent.indexOf('…') !== -1) {
+          setStatus('未收到登录同步请求（可关闭本窗口）');
+        }
+      }, 4000);
+    })();
+  </script>
+</body>
+</html>
