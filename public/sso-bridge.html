@@ -30,13 +30,13 @@
     <div class="logo">🌟</div>
     <h1>星辰旅人论坛 · 登录状态桥接</h1>
     <p><span class="spin"></span></p>
-    <p id="status">正在等待登录同步请求…</p>
+    <p id="status">正在读取论坛登录状态…</p>
     <p>本页面仅用于第三方站点（如 MC 免端口域名生成器）同步论坛登录状态，请勿直接访问。</p>
   </main>
   <script>
     (function () {
       'use strict';
-      // 允许请求登录状态的站点白名单：只有这些源发起的握手才会得到响应。
+      // 允许同步登录状态的站点白名单（与后端 SSO_ALLOWED_ORIGINS 保持一致）
       var ALLOWED_ORIGINS = [
         'https://zako.mom',
         'http://127.0.0.1:8788', // 本地开发
@@ -52,41 +52,23 @@
         if (spinner && text) spinner.style.display = 'none';
       }
 
-      function reply(source, origin, payload) {
-        try { source.postMessage(payload, { targetOrigin: origin }); } catch (e) { /* ignore */ }
-      }
-
-      function parseJwtPayload(jwt) {
-        try {
-          var p = jwt.split('.')[1];
-          p += '='.repeat(p.length % 4 === 0 ? 0 : 4 - (p.length % 4));
-          return JSON.parse(decodeURIComponent(escape(atob(p.replace(/-/g, '+').replace(/_/g, '/')))));
-        } catch (e) { return null; }
-      }
-
       function bearerGet(path, token) {
         return fetch(path, { headers: { Authorization: 'Bearer ' + token } })
           .then(function (r) { return r.ok ? r.json() : null; })
           .catch(function () { return null; });
       }
 
-      /**
-       * 汇总本站（论坛前端自身源，第一方上下文）的登录状态：
-       * 1) 优先用现有 access token 调 /api/auth/me；
-       * 2) 失效则用 refresh token 同源续期并写回（保持论坛自身登录态最新），再取一次资料。
-       */
+      /** 读取本域（论坛第一方上下文）登录态：me → 失效则同源续期并写回 → 再取资料 */
       function collectSession() {
         var access = localStorage.getItem(ACCESS_KEY) || '';
         var refresh = localStorage.getItem(REFRESH_KEY) || '';
         if (!access && !refresh) {
-          return Promise.resolve({ ok: false, error: 'NOT_LOGGED_IN' });
+          return Promise.resolve(null);
         }
         var me = access ? bearerGet('/api/auth/me', access) : Promise.resolve(null);
         return me.then(function (res) {
-          if (res && res.user) {
-            return { ok: true, user: res.user, accessToken: access, refreshToken: refresh || null };
-          }
-          if (!refresh) return { ok: false, error: 'SESSION_INVALID' };
+          if (res && res.user) return { user: res.user, access: access, refresh: refresh || null };
+          if (!refresh) return null;
           return fetch('/api/auth/refresh', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -95,51 +77,65 @@
             .then(function (r) { return r.ok ? r.json() : null; })
             .catch(function () { return null; })
             .then(function (tokens) {
-              if (!tokens || !tokens.accessToken) return { ok: false, error: 'SESSION_INVALID' };
+              if (!tokens || !tokens.accessToken) return null;
               localStorage.setItem(ACCESS_KEY, tokens.accessToken);
               if (tokens.refreshToken) localStorage.setItem(REFRESH_KEY, tokens.refreshToken);
               return bearerGet('/api/auth/me', tokens.accessToken).then(function (me2) {
-                if (!me2 || !me2.user) return { ok: false, error: 'SESSION_INVALID' };
-                return {
-                  ok: true,
-                  user: me2.user,
-                  accessToken: tokens.accessToken,
-                  refreshToken: tokens.refreshToken || null
-                };
+                if (!me2 || !me2.user) return null;
+                return { user: me2.user, access: tokens.accessToken, refresh: tokens.refreshToken || null };
               });
             });
         });
       }
 
-      window.addEventListener('message', function (e) {
-        if (e.origin === window.location.origin) return; // 只接受跨站父页面握手
-        if (ALLOWED_ORIGINS.indexOf(e.origin) === -1) return; // 非白名单源一律不响应
-        if (!e.data || e.data.type !== 'starlr-sso-request') return;
-        setStatus('正在核对论坛登录状态…');
-        collectSession().then(function (result) {
-          if (!result.ok) {
-            setStatus(result.error === 'NOT_LOGGED_IN' ? '论坛未登录' : '论坛登录状态已失效');
-          } else {
-            var u = result.user || {};
-            setStatus('已找到登录状态：@' + (u.username || '?'));
-          }
-          reply(e.source, e.origin, {
-            type: 'starlr-sso-response',
-            ok: !!result.ok,
-            error: result.error || null,
-            user: result.ok ? result.user : null,
-            accessToken: result.ok ? result.accessToken : null,
-            refreshToken: result.ok ? result.refreshToken : null
-          });
-        });
-      });
+      function back(url, params) {
+        var target = url + '#' + params;
+        setStatus('正在返回…');
+        window.location.replace(target);
+      }
 
-      // 直接访问（无握手）时给出说明
-      setTimeout(function () {
-        if (statusEl && statusEl.textContent.indexOf('…') !== -1) {
-          setStatus('未收到登录同步请求（可关闭本窗口）');
+      function fail(returnUrl, message) {
+        setStatus(message);
+        setTimeout(function () {
+          back(returnUrl, 'sso=error&reason=' + encodeURIComponent(message));
+        }, 1200);
+      }
+
+      function run() {
+        var qs = new URLSearchParams(window.location.search);
+        var redirect = qs.get('redirect') || '';
+        var challenge = qs.get('challenge') || '';
+        var origin = '';
+        try { origin = new URL(redirect).origin.replace(/\/+$/, ''); } catch (e) { origin = ''; }
+
+        if (!redirect || ALLOWED_ORIGINS.indexOf(origin) === -1 || !challenge) {
+          setStatus('缺少合法的回跳地址或校验参数（可关闭本页）');
+          return;
         }
-      }, 4000);
+
+        collectSession().then(function (session) {
+          if (!session) {
+            back(redirect, 'sso=none');
+            return;
+          }
+          setStatus('已找到论坛登录状态：@' + (session.user.username || '?') + '，正在签发一次性凭证…');
+          return fetch('/api/auth/site-login/issue', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access },
+            body: JSON.stringify({ origin: origin, challenge: challenge })
+          })
+            .then(function (r) { return r.ok ? r.json() : r.json().catch(function () { return null; }).then(function (b) { return Promise.reject(new Error((b && b.error && b.error.message) || '签发失败')); }); })
+            .then(function (data) {
+              if (!data || !data.ticket) throw new Error('签发失败');
+              back(redirect, 'sso_ticket=' + encodeURIComponent(data.ticket) + '&sso_challenge=' + encodeURIComponent(challenge));
+            })
+            .catch(function (e) {
+              fail(redirect, '登录同步失败：' + (e && e.message ? e.message : '未知原因'));
+            });
+        });
+      }
+
+      run();
     })();
   </script>
 </body>
