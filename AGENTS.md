@@ -66,7 +66,7 @@ src/
 **文案/样式**
 - 界面文案全部中文；表单 placeholder 不放示例（密码框可用「8 位以上」）。
 - 颜色只用 `--sl-*` 令牌与 `text-muted`/`bg-surface2` 等语义类，不写死色值；明暗主题都要检查（`useTheme()` + `document.documentElement.dataset.theme`）。
-- Logo 用 `icon-512.png` 圆角 25%。
+- **网站 icon / logo 一律优先用 `public/` 中的站点资源**：页面 logo 用 `icon-512.png`（圆角 25%），小图标/工具页用 `icon-192.png`，favicon `favicon.ico`、`apple-touch-icon.png`；不要用 emoji、外部图床或临时占位图代替站点 icon/logo（sso-bridge 曾用 emoji 被纠正）。
 
 **部署分离模式**
 - 同源（x 站）`API_BASE=''`；f 站构建注入 `https://i.182030.xyz`。新代码里**禁止**裸 `fetch('/api/...')`，统一 `api()`；跨域新静态资源域名记得加进后端 `ALLOWED_ORIGINS` 与 Turnstile widget domains。
