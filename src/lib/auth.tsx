@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  ApiClientError,
   clearStoredTokens,
   getStoredAccessToken,
   getStoredRefreshToken,
@@ -60,16 +61,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshToken = getStoredRefreshToken();
     if (!refreshToken) return null;
     refreshInFlight ??= (async () => {
+      let newAccessToken: string | null = null;
       try {
         const res = await refreshTokens(refreshToken);
         applyTokens(res);
-        const me = await fetchMe();
+        newAccessToken = res.accessToken;
+        // retryOn401:false —— 此处处于刷新流程内部，me 请求若 401 再走 refreshHandler 会自我 await 死锁
+        const me = await fetchMe({ retryOn401: false });
         setUser(me.user);
         return res.accessToken;
-      } catch {
-        clearStoredTokens();
-        setUser(null);
-        return null;
+      } catch (err) {
+        if (err instanceof ApiClientError) {
+          // 服务端明确拒绝（刷新/me 被吊销等）：清登录态
+          clearStoredTokens();
+          setUser(null);
+          return null;
+        }
+        // 网络错误：token 刷新已成功，保留新 token，交给后续请求重试
+        return newAccessToken;
       } finally {
         refreshInFlight = null;
       }

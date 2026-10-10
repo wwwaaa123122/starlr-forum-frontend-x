@@ -1,8 +1,8 @@
 /** 帖子详情：正文 Markdown + 操作条 + 楼中楼回复 */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CornerDownRight, Bookmark, Eye, Star } from 'lucide-react';
+import { CornerDownRight, Bookmark, Eye, Loader2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   favoritePost,
@@ -32,23 +32,32 @@ export default function PostDetail() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [replyTarget, setReplyTarget] = useState<{ id: string; name: string } | null>(null);
-  const viewedRef = useRef(false);
+  /** 已上报浏览量的帖子 id（/post/:id 换参不重挂载，按 id 去重） */
+  const lastViewedRef = useRef<string | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['post', id],
     queryFn: () => getPost(id),
   });
 
-  const { data: repliesData, isLoading: repliesLoading } = useQuery({
+  const {
+    data: repliesData,
+    isLoading: repliesLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['replies', id],
-    queryFn: () => listReplies(id, 1, 50),
+    queryFn: ({ pageParam }) => listReplies(id, pageParam, 50),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.pagination.hasMore ? last.pagination.page + 1 : undefined),
     enabled: Boolean(data),
   });
 
-  // 浏览量上报（每次进入去重一次）
+  // 浏览量上报（同一帖子只上报一次；换帖后重新上报）
   useEffect(() => {
-    if (!id || viewedRef.current) return;
-    viewedRef.current = true;
+    if (!id || lastViewedRef.current === id) return;
+    lastViewedRef.current = id;
     void markView(id)
       .then((res) => {
         if (typeof res?.viewCount === 'number') {
@@ -119,9 +128,9 @@ export default function PostDetail() {
     });
   }, [post]);
 
-  /* 楼中楼：parentReplyId 分组 */
+  /* 楼中楼：parentReplyId 分组（跨所有已加载页） */
+  const replies = useMemo(() => repliesData?.pages.flatMap((p) => p.replies) ?? [], [repliesData]);
   const { topLevel, childrenMap } = useMemo(() => {
-    const replies = repliesData?.replies ?? [];
     const top: Reply[] = [];
     const map = new Map<string, Reply[]>();
     for (const r of replies) {
@@ -134,7 +143,7 @@ export default function PostDetail() {
       }
     }
     return { topLevel: top, childrenMap: map };
-  }, [repliesData]);
+  }, [replies]);
 
   if (isLoading) {
     return (
@@ -289,6 +298,14 @@ export default function PostDetail() {
             ))}
           </div>
         ))
+      )}
+
+      {hasNextPage && (
+        <div className="flex justify-center border-b border-line py-4">
+          <Button variant="outline" pill disabled={isFetchingNextPage} onClick={() => fetchNextPage()}>
+            {isFetchingNextPage ? <Loader2 size={15} className="animate-spin" /> : null} 加载更多回复
+          </Button>
+        </div>
       )}
     </>
   );

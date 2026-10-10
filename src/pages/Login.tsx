@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AtSign, Loader2, LogIn, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth';
+import { forgotPassword } from '@/lib/endpoints';
 import { Button, Input } from '@/components/ui/primitives';
 import { Turnstile, fetchSiteConfig } from '@/components/Turnstile';
 import { githubOAuthStartUrl } from '@/lib/endpoints';
@@ -21,6 +22,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
   const [siteKey, setSiteKey] = useState<string | null>(null);
+  /** 找回密码：后端发重置邮件 → /reset-password 页设置新密码 */
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   useEffect(() => {
     void fetchSiteConfig().then((cfg) => setSiteKey(cfg.turnstileSiteKey));
@@ -38,6 +43,22 @@ export default function Login() {
       toast.error(err instanceof Error ? err.message : '登录失败');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!forgotEmail.trim()) return toast.error('请输入注册邮箱');
+    setForgotLoading(true);
+    try {
+      await forgotPassword(forgotEmail.trim());
+      toast.success('如果该邮箱已注册，重置邮件已发送，请在 30 分钟内完成重置');
+      setForgotOpen(false);
+      setForgotEmail('');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : '发送失败');
+    } finally {
+      setForgotLoading(false);
     }
   };
 
@@ -117,10 +138,26 @@ export default function Login() {
             <Link to="/register" className="font-semibold text-brand hover:underline">
               注册新账号
             </Link>
-            <Link to="/login" className="text-muted hover:text-ink" title="找回密码（使用注册邮箱）">
+            <button type="button" onClick={() => setForgotOpen((v) => !v)} className="text-muted hover:text-ink">
               忘记密码？
-            </Link>
+            </button>
           </div>
+          {forgotOpen && (
+            <form onSubmit={submitForgot} className="mt-3 flex gap-2">
+              <Input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="注册邮箱"
+                autoComplete="email"
+                className="flex-1"
+                autoFocus
+              />
+              <Button type="submit" pill disabled={forgotLoading}>
+                {forgotLoading ? <Loader2 size={15} className="animate-spin" /> : null} 发送重置邮件
+              </Button>
+            </form>
+          )}
           <p className="mt-6 text-xs leading-relaxed text-faint">
             登录即代表你同意{' '}
             <Link to="/terms" className="text-brand hover:underline">《用户协议》</Link> 和{' '}

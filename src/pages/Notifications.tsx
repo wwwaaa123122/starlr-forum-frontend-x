@@ -23,6 +23,23 @@ function toBool(v: number | boolean | undefined): boolean {
   return v === 1 || v === true;
 }
 
+/** 系统通知 content 为后端 JSON.stringify({ title, body, link })；解析失败返回 null（回退渲染原文） */
+function parseSystemContent(content: string | null): { title?: string; body?: string; link?: string } | null {
+  if (!content) return null;
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    const obj = parsed as Record<string, unknown>;
+    return {
+      title: typeof obj.title === 'string' ? obj.title : undefined,
+      body: typeof obj.body === 'string' ? obj.body : undefined,
+      link: typeof obj.link === 'string' ? obj.link : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default function Notifications() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -67,6 +84,14 @@ export default function Notifications() {
 
   const openNotification = (n: NotificationItem) => {
     if (!toBool(n.isRead)) readMut.mutate(n.id);
+    // 系统通知：link 为站内相对路径时整条可点击跳转
+    if (n.type === 'system') {
+      const link = n.link ?? parseSystemContent(n.content)?.link;
+      if (link && link.startsWith('/')) {
+        navigate(link);
+        return;
+      }
+    }
     if (n.postId) navigate(`/post/${n.postId}`);
   };
 
@@ -123,6 +148,7 @@ function NotificationRow({ n, onOpen }: { n: NotificationItem; onOpen: () => voi
   const isUnread = !toBool(n.isRead);
   const meta = typeMeta(n.type);
   const Icon = meta.Icon;
+  const sys = n.type === 'system' ? parseSystemContent(n.content) : null;
   return (
     <button
       onClick={onOpen}
@@ -143,7 +169,15 @@ function NotificationRow({ n, onOpen }: { n: NotificationItem; onOpen: () => voi
           <span className="shrink-0 text-muted">{meta.label}</span>
           <span className="ml-auto shrink-0 text-[13px] text-faint">{relativeTime(n.createdAt)}</span>
         </span>
-        {n.content && <span className="mt-0.5 line-clamp-2 block text-sm text-muted">{n.content}</span>}
+        {/* 系统通知：渲染解析出的 title/body；解析失败回退原文 */}
+        {sys ? (
+          <span className="mt-0.5 block">
+            {sys.title && <span className="line-clamp-2 block text-sm font-semibold">{sys.title}</span>}
+            {sys.body && <span className="mt-0.5 line-clamp-2 block text-sm text-muted">{sys.body}</span>}
+          </span>
+        ) : (
+          n.content && <span className="mt-0.5 line-clamp-2 block text-sm text-muted">{n.content}</span>
+        )}
         {n.postTitle && (
           <span className="mt-1 line-clamp-1 block text-sm font-semibold text-brand">「{n.postTitle}」</span>
         )}

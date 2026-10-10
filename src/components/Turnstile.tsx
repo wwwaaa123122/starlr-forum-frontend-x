@@ -4,7 +4,7 @@
  * 主题跟随 Starlr 的 data-theme（dark/light）。
  */
 import { useEffect, useRef, useState } from 'react';
-import { API_BASE } from '@/lib/base-url';
+import { api } from '@/lib/api';
 
 declare global {
   interface Window {
@@ -90,16 +90,19 @@ export function Turnstile({ siteKey, onToken }: TurnstileProps) {
   );
 }
 
-/** 获取站点配置（/api/config，含 Turnstile site key），模块级缓存 */
+/** 获取站点配置（/api/config，含 Turnstile site key），仅成功结果写模块级缓存（失败下次重试） */
 let configCache: { turnstileSiteKey: string | null } | null = null;
 
 export async function fetchSiteConfig(): Promise<{ turnstileSiteKey: string | null }> {
   if (configCache) return configCache;
   try {
-    const res = await fetch(`${API_BASE}/api/config`);
-    configCache = (await res.json()) as { turnstileSiteKey: string | null };
+    const res = await api<{ turnstileSiteKey: string | null }>('/api/config');
+    if (!res || typeof res !== 'object') throw new Error('站点配置响应异常');
+    const config = { turnstileSiteKey: res.turnstileSiteKey ?? null };
+    configCache = config;
+    return config;
   } catch {
-    configCache = { turnstileSiteKey: null };
+    // 失败/非 ok 不写缓存，下次进入页面重试
+    return { turnstileSiteKey: null };
   }
-  return configCache;
 }

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { Button, Modal, Skeleton, Textarea } from '@/components/ui/primitives';
 import { relativeTime } from '@/lib/utils';
-import { REASON_LABEL, Tag, type AdminPagination, type ReportItem } from './shared';
+import { REASON_LABEL, PageNav, Tag, type AdminPagination, type ReportItem } from './shared';
 
 const STATUS_LABEL: Record<string, { label: string; tone: 'warn' | 'ok' | 'plain' }> = {
   pending: { label: '待处理', tone: 'warn' },
@@ -17,10 +17,10 @@ export default function AdminReports() {
   const queryClient = useQueryClient();
   const refresh = () => void queryClient.invalidateQueries({ queryKey: ['admin'] });
   const [status, setStatus] = useState('pending');
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'reports', status],
+    queryKey: ['admin', 'reports', status, page],
     queryFn: () =>
       api<{ reports: ReportItem[]; pagination: AdminPagination }>(
         `/api/admin/reports?page=${page}&pageSize=30&status=${status}`,
@@ -66,7 +66,10 @@ export default function AdminReports() {
         {(['pending', 'resolved', 'dismissed'] as const).map((s) => (
           <button
             key={s}
-            onClick={() => setStatus(s)}
+            onClick={() => {
+              setStatus(s);
+              setPage(1);
+            }}
             className={`rounded-full px-3.5 py-1.5 text-[13px] font-bold transition ${
               status === s ? 'bg-brand text-white' : 'border border-line-strong text-muted hover:bg-surface2 hover:text-ink'
             }`}
@@ -128,6 +131,8 @@ export default function AdminReports() {
           })}
         </div>
       )}
+
+      <PageNav pagination={data?.pagination} onPage={setPage} />
 
       {/* 处理弹窗 */}
       <Modal open={Boolean(handleTarget)} onClose={() => setHandleTarget(null)} className="w-[92vw] max-w-md p-6">

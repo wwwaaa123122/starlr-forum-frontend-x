@@ -66,7 +66,7 @@ export default function AdminNotify() {
       <div className="space-y-2">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="通知标题" maxLength={100} />
         <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="通知正文（可选）" maxLength={500} rows={3} />
-        <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="跳转链接（可选）：/post/xxx 或 https://…" />
+        <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="可留空，填站内路径" />
       </div>
 
       <div className="flex items-center justify-between">

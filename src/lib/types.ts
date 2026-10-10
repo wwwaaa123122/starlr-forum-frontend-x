@@ -83,6 +83,8 @@ export interface NotificationItem {
   postId: string | null;
   replyId: string | null;
   content: string | null;
+  /** 系统通知的站内跳转链接（后端存于 content 的 JSON 里：{title, body, link}） */
+  link?: string;
   isRead: number | boolean;
   createdAt: string;
   actorName: string | null;

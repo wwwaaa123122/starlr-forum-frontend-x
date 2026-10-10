@@ -25,6 +25,7 @@ import {
   bindGithubIntent,
   changePassword,
   githubOAuthBindUrl,
+  resendVerification,
   revokeOthers,
   revokeSession,
   unbindGithub,
@@ -64,9 +65,9 @@ export default function Settings() {
 
   const profileMut = useMutation({
     mutationFn: () => updateMe({ nickname: nickname.trim(), bio }),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      setUser(res.user);
       toast.success('资料已更新');
-      void queryClient.invalidateQueries({ queryKey: ['me'] });
       void queryClient.invalidateQueries({ queryKey: ['user', user?.username] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : '更新失败'),
@@ -105,10 +106,11 @@ export default function Settings() {
 
   const avatarMut = useMutation({
     mutationFn: async (file: File) => uploadImage(file, 'avatar'),
-    onSuccess: () => {
+    onSuccess: (url) => {
+      // 后端上传 purpose=avatar 时已直接写入 avatar_url（带 ?v= 防缓存），同步本地用户态
+      if (user) setUser({ ...user, avatarUrl: url });
       toast.success('头像已更新');
-      void queryClient.invalidateQueries({ queryKey: ['me'] });
-      void queryClient.invalidateQueries();
+      void queryClient.invalidateQueries({ queryKey: ['user', user?.username] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : '上传失败'),
   });
@@ -116,6 +118,14 @@ export default function Settings() {
   if (!user) return null;
 
   const isUnverified = user.accountStatus === 'unverified';
+
+  const resendMut = useMutation({
+    mutationFn: resendVerification,
+    onSuccess: (res) => {
+      toast.success(res.alreadyVerified ? '邮箱已验证，无需重发' : '验证邮件已发送，请查收（60 秒内仅可发送一次）');
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : '发送失败'),
+  });
 
   return (
     <>
@@ -127,7 +137,15 @@ export default function Settings() {
           <ShieldCheck size={17} className="mt-0.5 shrink-0 text-star" />
           <p className="leading-relaxed">
             邮箱尚未验证：验证后才能发帖、回复与上传图片。请查收激活邮件，或在站内
-            <span className="font-semibold"> 重新发送验证邮件</span>。
+            <button
+              type="button"
+              className="font-semibold text-brand hover:underline disabled:opacity-60"
+              disabled={resendMut.isPending}
+              onClick={() => resendMut.mutate()}
+            >
+              {resendMut.isPending ? '发送中…' : '重新发送验证邮件'}
+            </button>
+            。
           </p>
         </div>
       )}

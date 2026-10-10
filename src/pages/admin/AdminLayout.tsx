@@ -54,6 +54,19 @@ export default function AdminLayout() {
     );
   }
 
+  // adminOnly 分区（/admin/users、/admin/services 等）仅管理员可访问：直接输 URL 也要拦下
+  const current = SECTIONS.find((s) =>
+    s.to === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(s.to),
+  );
+  if (current?.adminOnly && !isAdmin) {
+    return (
+      <>
+        <ColumnHeader title="管理后台" back />
+        <EmptyState icon={<ShieldCheck size={40} />} title="无权访问" description="该分区仅管理员可以访问" />
+      </>
+    );
+  }
+
   const items = SECTIONS.filter((s) => !s.adminOnly || isAdmin);
 
   return (

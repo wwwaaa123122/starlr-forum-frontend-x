@@ -37,6 +37,7 @@ export default function AdminSso() {
   const [enabled, setEnabled] = useState(true);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (data) {
@@ -65,10 +66,10 @@ export default function AdminSso() {
   });
 
   const { data: eventsData } = useQuery({
-    queryKey: ['admin', 'sso', 'events', data?.origins],
+    queryKey: ['admin', 'sso', 'events', page],
     queryFn: () =>
       api<{ logs: (SsoEvent & { action: string })[]; pagination: AdminPagination }>(
-        '/api/admin/audit-logs?action=user.site_login&page=1&pageSize=15',
+        `/api/admin/audit-logs?action=user.site_login&page=${page}&pageSize=15`,
       ),
     enabled: !!data,
   });
@@ -90,7 +91,7 @@ export default function AdminSso() {
           <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs">
             <input
               type="checkbox"
-              className="h-4 w-4 accent-[--sl-accent]"
+              className="h-4 w-4 accent-brand"
               checked={enabled}
               onChange={(e) => setEnabled(e.target.checked)}
             />
@@ -101,7 +102,7 @@ export default function AdminSso() {
         <div className="mt-3">
           <div className="mb-1 text-xs font-medium">允许同步登录状态的站点源（每行一个，如 https://zako.mom）</div>
           <textarea
-            className="h-32 w-full resize-y rounded-md border border-line bg-surface p-2 font-mono text-xs outline-none focus:border-accent"
+            className="h-32 w-full resize-y rounded-md border border-line bg-surface p-2 font-mono text-xs outline-none focus:border-brand"
             value={text}
             spellCheck={false}
             onChange={(e) => setText(e.target.value)}
@@ -150,7 +151,7 @@ export default function AdminSso() {
             )}
           </tbody>
         </TableWrap>
-        <PageNav pagination={eventsData?.pagination} onPage={() => {}} />
+        <PageNav pagination={eventsData?.pagination} onPage={setPage} />
       </div>
     </div>
   );

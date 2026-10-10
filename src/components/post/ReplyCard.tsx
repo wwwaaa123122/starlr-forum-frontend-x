@@ -139,11 +139,6 @@ export function ReplyCard({
                         删除
                       </MenuItem>
                     )}
-                    {!isAuthor && !canModerate && (
-                      <MenuItem icon={<Star size={15} />} onClick={close}>
-                        收藏此回复
-                      </MenuItem>
-                    )}
                   </>
                 )}
               </Dropdown>

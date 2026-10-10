@@ -25,6 +25,7 @@ import Profile from '@/pages/Profile';
 import PostDetail from '@/pages/PostDetail';
 import Compose from '@/pages/Compose';
 import Login from '@/pages/Login';
+import ResetPassword from '@/pages/ResetPassword';
 import OAuthCallback from '@/pages/OAuthCallback';
 import Register from '@/pages/Register';
 import Settings from '@/pages/Settings';
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/post/:id" element={<PostDetail />} />
         <Route path="/u/:username" element={<Profile />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/auth/github/done" element={<OAuthCallback />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

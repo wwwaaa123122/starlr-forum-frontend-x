@@ -94,7 +94,20 @@ export const logout = (refreshToken?: string) =>
 
 export const logoutAll = () => api<unknown>('/api/auth/logout-all', { method: 'POST' });
 
-export const fetchMe = () => api<{ user: MeUser }>('/api/auth/me');
+/** options.retryOn401=false 用于 token 刷新流程内部（避免自我 await 死锁） */
+export const fetchMe = (options: { retryOn401?: boolean } = {}) => api<{ user: MeUser }>('/api/auth/me', options);
+
+/** 忘记密码：发送重置邮件（后端始终返回 success，防邮箱枚举） */
+export const forgotPassword = (email: string) =>
+  api<{ success: true }>('/api/auth/forgot-password', { method: 'POST', body: { email }, retryOn401: false });
+
+/** 重置密码：消费邮件链接里的一次性令牌 */
+export const resetPassword = (token: string, password: string) =>
+  api<{ success: true }>('/api/auth/reset-password', { method: 'POST', body: { token, password }, retryOn401: false });
+
+/** 重新发送验证邮件（需登录，后端 60 秒冷却 + 每小时 3 次） */
+export const resendVerification = () =>
+  api<{ sent: boolean; alreadyVerified?: boolean }>('/api/auth/resend-verification', { method: 'POST', retryOn401: false });
 
 /* ---------------- 分类 /api/categories ---------------- */
 

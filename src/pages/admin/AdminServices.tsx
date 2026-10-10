@@ -174,7 +174,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
                     <Input
                       value={row.from}
                       onChange={(e) => setMailRows((rows) => rows.map((r, j) => (j === i ? { ...r, from: e.target.value } : r)))}
-                      placeholder="星辰旅人论坛 <no-reply@i.xc-lr.cn>"
+                      placeholder="需已在 Resend 验证的发件域"
                       spellCheck={false}
                     />
                   </div>
@@ -245,7 +245,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
       {svc.key === 'mail' && (
         <div className="mt-3">
           <Field label="测试收件邮箱">
-            <Input value={mailTo} onChange={(e) => setMailTo(e.target.value)} placeholder="you@example.com" type="email" />
+            <Input value={mailTo} onChange={(e) => setMailTo(e.target.value)} placeholder="接收测试邮件的邮箱" type="email" />
           </Field>
         </div>
       )}
