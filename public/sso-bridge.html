@@ -35,12 +35,14 @@
   <script>
     (function () {
       'use strict';
-      // 允许同步登录状态的站点白名单（与后端 SSO_ALLOWED_ORIGINS 保持一致）
-      var ALLOWED_ORIGINS = [
+      // 允许同步登录状态的站点白名单：运行时从 /api/auth/site-login/origins 拉取
+      // （管理后台 /admin/sso 维护，改配置无需重新部署）；拉取失败时用内置兜底。
+      var FALLBACK_ORIGINS = [
         'https://zako.mom',
-        'http://127.0.0.1:8788', // 本地开发
+        'http://127.0.0.1:8788',
         'http://localhost:8788'
       ];
+      var REMOTE_CONFIG = null;
       var ACCESS_KEY = 'starlr.access';
       var REFRESH_KEY = 'starlr.refresh';
       var statusEl = document.getElementById('status');
@@ -100,6 +102,13 @@
         }, 1200);
       }
 
+      function allowedOrigins() {
+        if (REMOTE_CONFIG && Array.isArray(REMOTE_CONFIG.origins) && REMOTE_CONFIG.origins.length) {
+          return REMOTE_CONFIG.origins.map(function (o) { return String(o).replace(/\/+$/, ''); });
+        }
+        return FALLBACK_ORIGINS;
+      }
+
       function run() {
         var qs = new URLSearchParams(window.location.search);
         var redirect = qs.get('redirect') || '';
@@ -107,7 +116,11 @@
         var origin = '';
         try { origin = new URL(redirect).origin.replace(/\/+$/, ''); } catch (e) { origin = ''; }
 
-        if (!redirect || ALLOWED_ORIGINS.indexOf(origin) === -1 || !challenge) {
+        if (REMOTE_CONFIG && REMOTE_CONFIG.enabled === false) {
+          setStatus('论坛登录同步功能当前已关闭（可关闭本页）');
+          return;
+        }
+        if (!redirect || allowedOrigins().indexOf(origin) === -1 || !challenge) {
           setStatus('缺少合法的回跳地址或校验参数（可关闭本页）');
           return;
         }
@@ -134,7 +147,22 @@
         });
       }
 
-      run();
+      // 先拉取动态白名单（60s 可缓存），失败不阻塞：用兜底列表继续
+      (function () {
+        var started = false;
+        var timer = setTimeout(function () { if (!started) { started = true; run(); } }, 1500);
+        fetch('/api/auth/site-login/origins')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            REMOTE_CONFIG = d && typeof d === 'object' ? d : null;
+            clearTimeout(timer);
+            if (!started) { started = true; run(); }
+          })
+          .catch(function () {
+            clearTimeout(timer);
+            if (!started) { started = true; run(); }
+          });
+      })();
     })();
   </script>
 </body>
