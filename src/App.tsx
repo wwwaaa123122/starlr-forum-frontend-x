@@ -1,5 +1,5 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { applySeo } from '@/lib/seo';
 import { AppShell } from '@/components/layout/AppShell';
 import AdminLayout from '@/pages/admin/AdminLayout';
@@ -59,11 +59,52 @@ function SeoBridge() {
   return null;
 }
 
+/** 各路径的滚动位置记忆（返回 / 前进时恢复，其它导航回顶部） */
+const scrollMemory = new Map<string, number>();
+
+/** 页面切换动效：以路径为 key 重新挂载，让新页面播放轻微上浮淡入（anim-page） */
+function PageTransition({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  return (
+    <div key={pathname} className="anim-page">
+      {children}
+    </div>
+  );
+}
+
+/** 滚动管理：前进/刷新进新页回顶部；浏览器返回/前进（POP）恢复该页上次位置 */
+function ScrollManager() {
+  const { pathname } = useLocation();
+  const navType = useNavigationType();
+  const firstRender = useRef(true);
+
+  // 持续记录当前页滚动位置（离开前保留现场）
+  useEffect(() => {
+    const onScroll = () => scrollMemory.set(pathname, window.scrollY);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [pathname]);
+
+  // 首次加载不干预（交给浏览器原生滚动恢复）；之后布局提交前恢复，避免闪跳
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const saved = navType === 'POP' ? scrollMemory.get(pathname) : undefined;
+    window.scrollTo(0, saved ?? 0);
+  }, [pathname, navType]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <AppShell>
       <SeoBridge />
-      <Routes>
+      <ScrollManager />
+      <PageTransition>
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/categories" element={<Categories />} />
@@ -95,6 +136,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </PageTransition>
     </AppShell>
   );
 }

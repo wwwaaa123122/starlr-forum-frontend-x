@@ -44,7 +44,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'focus-ring inline-flex select-none items-center justify-center gap-1.5 font-bold transition disabled:cursor-not-allowed disabled:opacity-50',
+        'focus-ring inline-flex select-none items-center justify-center gap-1.5 font-bold transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50',
         buttonVariants[variant],
         buttonSizes[size],
         pill && 'rounded-full',
@@ -67,7 +67,7 @@ export function IconButton({
     <button
       aria-label={label}
       title={label}
-      className={cn('btn-icon focus-ring h-9 w-9 text-muted hover:bg-surface2 hover:text-ink', className)}
+      className={cn('btn-icon focus-ring h-9 w-9 text-muted hover:bg-surface2 hover:text-ink active:scale-90', className)}
       {...props}
     />
   );
@@ -173,7 +173,7 @@ export function Skeleton({ className }: { className?: string }) {
   return <div className={cn('animate-pulse rounded-xl bg-surface2', className)} />;
 }
 
-/* ---------------- Tabs（下划线式，X 风格三 px 底边） ---------------- */
+/* ---------------- Tabs（下划线式，X 风格三 px 底边，指示条平滑滑动） ---------------- */
 
 interface TabsContextValue {
   value: string;
@@ -194,9 +194,11 @@ export function Tabs({
   className?: string;
 }) {
   const baseId = useId();
+  const activeIndex = Math.max(0, items.findIndex((item) => item.value === value));
+  const step = items.length > 0 ? 100 / items.length : 100;
   return (
     <TabsContext.Provider value={{ value, setValue: onChange, baseId }}>
-      <div className={cn('flex overflow-x-auto', className)} role="tablist">
+      <div className={cn('relative flex overflow-x-auto', className)} role="tablist">
         {items.map((item) => {
           const active = item.value === value;
           return (
@@ -214,12 +216,17 @@ export function Tabs({
               {typeof item.count === 'number' && item.count > 0 && (
                 <span className="ml-1.5 text-xs text-faint">{item.count}</span>
               )}
-              {active && (
-                <span className="absolute inset-x-4 bottom-0 h-1 rounded-full bg-brand" aria-hidden />
-              )}
             </button>
           );
         })}
+        {/* 滑动指示条：切换标签时平滑平移到选中项 */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 transition-transform duration-200 ease-out"
+          style={{ width: `${step}%`, transform: `translateX(${activeIndex * 100}%)` }}
+        >
+          <span className="absolute inset-x-4 bottom-0 h-1 rounded-full bg-brand" />
+        </span>
       </div>
     </TabsContext.Provider>
   );
@@ -229,7 +236,7 @@ export function useTabsContext() {
   return useContext(TabsContext);
 }
 
-/* ---------------- Modal（居中卡片 + 遮罩） ---------------- */
+/* ---------------- Modal（居中卡片 + 遮罩，进出均有动效） ---------------- */
 
 export function Modal({
   open,
@@ -244,25 +251,50 @@ export function Modal({
   className?: string;
   closeOnBackdrop?: boolean;
 }) {
+  /** 关闭时先播 150ms 退场动画再卸载，避免面板生硬消失 */
+  const [mounted, setMounted] = useState(open);
+
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+      return;
+    }
+    const t = window.setTimeout(() => setMounted(false), 170);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  // 滚动锁定覆盖进出场全程（含退场期间），防止露底闪烁
+  useEffect(() => {
+    if (!mounted) return;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mounted]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!mounted) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:items-center">
+    <div
+      className={cn(
+        'fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:items-center',
+        open ? 'anim-fade' : 'anim-fade-out',
+      )}
+    >
       <div
         className={cn(
           'relative w-full max-w-xl rounded-2xl border border-line bg-canvas shadow-2xl',
+          open ? 'anim-panel' : 'anim-panel-out',
           className,
         )}
         onClick={(e) => e.stopPropagation()}
@@ -314,6 +346,15 @@ export function Dropdown({
           className={cn(
             'absolute z-40 mt-1 min-w-52 overflow-hidden rounded-xl border border-line bg-canvas py-1 shadow-2xl',
             align === 'right' ? 'right-0' : 'left-0',
+            // 底部弹出的菜单（如左下角账号菜单）自下而上展开，其余自上而下
+            className?.includes('bottom-full') ? 'anim-menu-up' : 'anim-menu',
+            align === 'right'
+              ? className?.includes('bottom-full')
+                ? 'origin-bottom-right'
+                : 'origin-top-right'
+              : className?.includes('bottom-full')
+                ? 'origin-bottom-left'
+                : 'origin-top-left',
             className,
           )}
           role="menu"
@@ -336,7 +377,7 @@ export function MenuItem({
     <button
       role="menuitem"
       className={cn(
-        'focus-ring flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold transition hover:bg-surface2',
+        'focus-ring flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold transition hover:bg-surface2 active:bg-surface2',
         danger ? 'text-danger' : 'text-ink',
         className,
       )}

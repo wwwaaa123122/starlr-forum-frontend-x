@@ -387,13 +387,16 @@ export function ActionButton({
     >
       <span
         className={cn(
-          'btn-icon h-[34px] w-[34px]',
+          'btn-icon h-[34px] w-[34px] transition-transform group-active:scale-90',
           c.halo,
           readOnly ? '' : c.text,
           active && c.active,
         )}
       >
-        {icon}
+        {/* 激活瞬间重挂载以重放弹跳动效（点赞/收藏点亮时） */}
+        <span key={active ? 'on' : 'off'} className={cn('block', active && 'anim-pop')}>
+          {icon}
+        </span>
       </span>
       {count != null && count > 0 && (
         <span className={cn('min-w-[24px] text-left', active && c.active)}>{formatCount(count)}</span>

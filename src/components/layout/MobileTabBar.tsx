@@ -43,11 +43,14 @@ export function MobileTabBar() {
               to={item.to}
               aria-label={item.label}
               className={cn(
-                'btn-icon focus-ring relative m-auto h-12 w-16',
+                'btn-icon focus-ring group relative m-auto h-12 w-16',
                 active ? 'text-ink' : 'text-muted hover:text-ink',
               )}
             >
-              <Icon size={25} strokeWidth={active ? 2.4 : 1.9} />
+              {/* 切换到当前标签时图标弹跳一下 */}
+              <span key={active ? 'on' : 'off'} className={cn('block', active && 'anim-pop')}>
+                <Icon size={25} strokeWidth={active ? 2.4 : 1.9} />
+              </span>
               {item.badge != null && item.badge > 0 && (
                 <span className="absolute right-2 top-1 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
                   {item.badge > 99 ? '99+' : item.badge}

@@ -97,7 +97,9 @@ export default function AdminLayout() {
               {({ isActive }) => (
                 <>
                   {s.label}
-                  {isActive && <span className="absolute inset-x-3 bottom-0 h-1 rounded-full bg-brand" aria-hidden />}
+                  {isActive && (
+                    <span className="anim-tab absolute inset-x-3 bottom-0 h-1 rounded-full bg-brand" aria-hidden />
+                  )}
                 </>
               )}
             </NavLink>

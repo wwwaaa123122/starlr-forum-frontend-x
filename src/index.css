@@ -133,6 +133,181 @@ body {
   background: color-mix(in srgb, var(--sl-surface) 55%, transparent);
 }
 
+/* ---------- 动效层 ----------
+ * 统一微交互节奏：进入用 ease-out 曲线（140–280ms），退场稍快。
+ * 只动 transform / opacity，走合成器不引起重排。
+ */
+
+@keyframes sl-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sl-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes sl-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sl-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sl-panel-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+@keyframes sl-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sl-menu-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sl-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes sl-drawer-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes sl-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  55% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes sl-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sl-tab-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* 页面切换：新页面轻微上浮淡入（App.tsx 以路由路径为 key 触发重放） */
+.anim-page {
+  animation: sl-page-in 0.24s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+/* 遮罩淡入淡出（Modal / 抽屉背景） */
+.anim-fade {
+  animation: sl-fade-in 0.18s ease-out both;
+}
+.anim-fade-out {
+  animation: sl-fade-out 0.16s ease-in both;
+}
+/* 弹窗面板：上浮缩放进出 */
+.anim-panel {
+  animation: sl-panel-in 0.2s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+.anim-panel-out {
+  animation: sl-panel-out 0.15s ease-in both;
+}
+/* 下拉菜单：自上 / 自下（底部弹出的菜单）展开 */
+.anim-menu {
+  animation: sl-menu-in 0.14s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+.anim-menu-up {
+  animation: sl-menu-in-up 0.14s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+/* 移动端抽屉：iOS 式侧滑进出 */
+.anim-drawer {
+  animation: sl-drawer-in 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+.anim-drawer-out {
+  animation: sl-drawer-out 0.22s cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+/* 点赞 / 收藏 / 激活图标：弹跳一下 */
+.anim-pop {
+  animation: sl-pop 0.32s cubic-bezier(0.22, 0.85, 0.35, 1);
+}
+/* 抽屉菜单项：逐项错峰滑入（配合 animationDelay） */
+.anim-item {
+  animation: sl-item-in 0.24s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+/* 标签下划线：展开进场 */
+.anim-tab {
+  animation: sl-tab-in 0.18s cubic-bezier(0.22, 0.85, 0.35, 1) both;
+}
+
+/* 无障碍：用户偏好减少动效时全部禁用 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* 行内链接 */
 .rich-text a {
   color: var(--sl-brand);

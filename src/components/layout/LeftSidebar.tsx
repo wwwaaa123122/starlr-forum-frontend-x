@@ -55,7 +55,7 @@ export function LeftSidebar() {
         {/* Logo */}
         <Link
           to="/"
-          className="btn-icon focus-ring my-0.5 h-13 w-13 p-3 hover:bg-surface2"
+          className="btn-icon focus-ring my-0.5 h-13 w-13 p-3 hover:bg-surface2 active:scale-95"
           aria-label="Starlr 首页"
         >
           <img src="/icon-512.png" alt="Starlr" className="h-8 w-8 rounded-[25%]" />
@@ -77,7 +77,7 @@ export function LeftSidebar() {
                   active ? 'text-ink' : 'text-muted hover:text-ink',
                 )}
               >
-                <span className="relative">
+                <span className="relative transition-transform group-active:scale-90">
                   <Icon size={26} strokeWidth={active ? 2.4 : 1.9} />
                   {item.badge != null && item.badge > 0 && (
                     <span className="absolute -right-1.5 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
@@ -113,9 +113,12 @@ export function LeftSidebar() {
         <button
           onClick={toggleTheme}
           title={isDark ? '切换到亮色' : '切换到暗色'}
-          className="btn-icon focus-ring h-12 w-12 shrink-0 text-muted hover:bg-surface2 hover:text-ink xl:h-11 xl:w-full xl:justify-start xl:gap-3 xl:px-3"
+          className="btn-icon focus-ring h-12 w-12 shrink-0 text-muted hover:bg-surface2 hover:text-ink active:scale-90 xl:h-11 xl:w-full xl:justify-start xl:gap-3 xl:px-3"
         >
-          {isDark ? <Moon size={22} /> : <Sun size={22} />}
+          {/* 主题图标切换时弹跳一下 */}
+          <span key={isDark ? 'dark' : 'light'} className="anim-pop inline-flex">
+            {isDark ? <Moon size={22} /> : <Sun size={22} />}
+          </span>
           <span className="hidden text-[15px] xl:inline">{isDark ? '暗色' : '亮色'}</span>
         </button>
 

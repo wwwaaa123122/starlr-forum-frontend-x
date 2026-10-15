@@ -1,5 +1,5 @@
 /** 移动端侧滑抽屉：账号区 + 导航 + 主题切换 + 登出 */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, LogOut, Moon, Settings, Sun, UserPlus } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
@@ -11,20 +11,32 @@ import { cn } from '@/lib/utils';
 export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user, unread, logout } = useAuth();
   const navigate = useNavigate();
+  /** 关闭时先播侧滑退场动画再卸载 */
+  const [mounted, setMounted] = useState(open);
 
-  // 打开时锁定滚动
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      setMounted(true);
+      return;
+    }
+    const t = window.setTimeout(() => setMounted(false), 220);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  // 滚动锁定覆盖进出场全程（含退场期间）
+  useEffect(() => {
+    if (!mounted) return;
+    document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [open]);
+  }, [mounted]);
 
   // Hook 必须无条件调用：放在提前 return 之前，否则打开抽屉瞬间会因
   // 「Rendered more hooks than during the previous render」崩溃黑屏
   const isDark = useTheme() === 'dark';
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   const items = drawerNavItems(user, unread);
 
@@ -36,11 +48,15 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
       <div
-        className="absolute inset-0 bg-brand/10 backdrop-blur-sm"
+        className={`absolute inset-0 bg-brand/10 backdrop-blur-sm ${open ? 'anim-fade' : 'anim-fade-out'}`}
         onClick={onClose}
         aria-hidden
       />
-      <div className="absolute inset-y-0 left-0 flex w-[78%] max-w-[320px] flex-col border-r border-line bg-canvas p-5 shadow-2xl">
+      <div
+        className={`absolute inset-y-0 left-0 flex w-[78%] max-w-[320px] flex-col border-r border-line bg-canvas p-5 shadow-2xl ${
+          open ? 'anim-drawer' : 'anim-drawer-out'
+        }`}
+      >
         {/* 账号区 */}
         {user ? (
           <Link to={`/u/${user.username}`} onClick={onClose} className="mb-6 flex items-center gap-3">
@@ -67,15 +83,16 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
           </div>
         )}
 
-        {/* 导航 */}
+        {/* 导航（逐项错峰滑入） */}
         <nav className="flex flex-col">
-          {items.map((item) => {
+          {items.map((item, i) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.to}
                 onClick={() => go(item.to)}
-                className="flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2"
+                style={{ animationDelay: `${i * 30}ms` }}
+                className="anim-item flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2 active:bg-surface2"
               >
                 <span className="relative">
                   <Icon size={22} strokeWidth={1.9} />
@@ -92,7 +109,8 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
           {user && (
             <button
               onClick={() => go('/settings')}
-              className="flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2"
+              style={{ animationDelay: `${items.length * 30}ms` }}
+              className="anim-item flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2 active:bg-surface2"
             >
               <Settings size={22} strokeWidth={1.9} /> 设置
             </button>
@@ -100,7 +118,10 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
         </nav>
 
         {/* 底部：主题 + 登出 */}
-        <div className="mt-auto flex flex-col gap-1 border-t border-line pt-4">
+        <div
+          className="anim-item mt-auto flex flex-col gap-1 border-t border-line pt-4"
+          style={{ animationDelay: `${(items.length + 1) * 30}ms` }}
+        >
           <button
             onClick={() => toggleTheme()}
             className="flex items-center gap-4 rounded-full px-3 py-3 text-left text-lg transition hover:bg-surface2"
