@@ -84,6 +84,16 @@
       el('switch').href = '?mode=register';
     }
 
+    // 应用凭据预交接：App 内已校验过账号密码，这里只需完成一次人机验证（无需重输密码）
+    var preauth = new URLSearchParams(location.search).get('preauth');
+    var preauthName = new URLSearchParams(location.search).get('name') || '';
+    if (preauth) {
+      document.querySelectorAll('#form-box label, #form-box input, .switch').forEach(function (n) { n.style.display = 'none'; });
+      document.querySelector('.sub').textContent =
+        '以账号「' + (preauthName || '已验证用户') + '」继续，完成人机验证后自动返回应用（无需再次输入密码）';
+      goBtn.textContent = mode === 'register' ? '完成人机验证并注册' : '完成人机验证并返回应用';
+    }
+
     function randomHex(n) {
       var a = new Uint8Array(n); crypto.getRandomValues(a);
       return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
@@ -123,6 +133,24 @@
 
     goBtn.addEventListener('click', function () {
       goBtn.disabled = true;
+      if (preauth) {
+        say('正在确认…');
+        var challenge = randomHex(16);
+        post('/api/auth/app-login/confirm', {
+          preauth: preauth, challenge: challenge, origin: location.origin, turnstileToken: turnstileToken,
+        })
+          .then(function (j) { returnToApp(j.ticket, challenge); })
+          .catch(function (e) {
+            // 预授权过期/已用：自动切回网页表单模式，用户仍可在网页完成登录
+            if (String(e.message).indexOf('预授权') !== -1) {
+              say('预授权已过期，正在切换到网页表单…');
+              setTimeout(function () { location.href = '/app-auth' + (mode === 'register' ? '?mode=register' : ''); }, 1200);
+            } else {
+              fail('操作失败：' + e.message);
+            }
+          });
+        return;
+      }
       var identifier = el('identifier').value.trim();
       var password = el('password').value;
       if (!identifier) return fail('请输入用户名或邮箱');
@@ -150,7 +178,9 @@
     fetch('/api/config', { cache: 'no-store' })
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (cfg) {
-        el('msg').textContent = mode === 'register' ? '填写信息完成注册' : '输入账号密码登录';
+        el('msg').textContent = preauth
+          ? '完成下方人机验证后自动返回应用'
+          : mode === 'register' ? '填写信息完成注册' : '输入账号密码登录';
         goBtn.disabled = false;
         if (!cfg.turnstileSiteKey) return; // 站点未启用验证
         var s = document.createElement('script');
