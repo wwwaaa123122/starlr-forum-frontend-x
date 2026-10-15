@@ -75,12 +75,12 @@ export default function Login() {
               <span className="bg-gradient-to-r from-brand to-boost bg-clip-text text-transparent">Starlr</span>
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-muted">
-              一次登录，加入星辰旅人的时间线。
+              一次登录，加入 Starlr 的时间线。
               <br />
               发帖、回复、收藏，让每颗星都被看见。
             </p>
           </div>
-          <p className="text-xs text-faint">星辰旅人论坛 · Cloudflare Serverless</p>
+          <p className="text-xs text-faint">Starlr Forum · Cloudflare Serverless</p>
         </div>
 
         {/* 表单区 */}

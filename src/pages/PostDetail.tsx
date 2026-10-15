@@ -119,7 +119,8 @@ export default function PostDetail() {
 
   useEffect(() => {
     applySeo({
-      title: post ? `${post.title} - 星辰旅人论坛` : '星辰旅人论坛',
+      // 文章页标题直接用文章标题；数据未到时用站点名兜底
+      title: post ? post.title : 'Starlr Forum',
       description: post?.content
         ? post.content.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`~\-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 150)
         : undefined,

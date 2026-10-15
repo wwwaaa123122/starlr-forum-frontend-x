@@ -33,7 +33,7 @@ export default function Profile() {
 
   useEffect(() => {
     applySeo({
-      title: profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - 星辰旅人论坛` : '星辰旅人论坛',
+      title: profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - Starlr Forum` : 'Starlr Forum',
       description: profile?.bio ?? undefined,
       path: profile ? `/u/${encodeURIComponent(profile.username)}` : undefined,
     });

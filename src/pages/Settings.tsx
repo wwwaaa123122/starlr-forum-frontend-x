@@ -263,7 +263,7 @@ export default function Settings() {
             <Button variant="outline" pill size="sm" onClick={() => fileRef.current?.click()}>
               更换头像
             </Button>
-            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/WEBP（可框选裁剪）· GIF 直接使用</p>
+            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/WEBP（可框选裁剪，自动压缩至 512px）· GIF 直接使用</p>
           </div>
           <input
             ref={fileRef}
@@ -324,6 +324,7 @@ export default function Settings() {
         aspect={cropTarget?.kind === 'avatar' ? 1 : 3}
         circular={cropTarget?.kind === 'avatar'}
         preview={cropTarget?.kind === 'background'}
+        maxEdge={cropTarget?.kind === 'avatar' ? 512 : 1920}
         onCancel={() => setCropTarget(null)}
         onConfirm={(cropped) => {
           const kind = cropTarget?.kind;

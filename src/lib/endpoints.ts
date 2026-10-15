@@ -264,9 +264,13 @@ export async function uploadImage(
   file: File,
   purpose: 'post' | 'reply' | 'avatar' | 'category' | 'background',
 ): Promise<string> {
-  // 上传前在浏览器压缩：背景图允许更长边（宽幅横图），头像默认即可
+  // 上传前在浏览器压缩：背景图允许更长边（宽幅横图）；头像再兜底压到 512px
+  // （裁剪弹窗已限制导出尺寸，这里防 GIF 直传/其它入口漏网）
   const { compressImage } = await import('./image-compress');
-  const { file: compressed } = await compressImage(file, purpose === 'background' ? { maxEdge: 2560 } : {});
+  const { file: compressed } = await compressImage(
+    file,
+    purpose === 'background' ? { maxEdge: 2560 } : purpose === 'avatar' ? { maxEdge: 512 } : {},
+  );
   const form = new FormData();
   form.append('file', compressed);
   form.append('purpose', purpose);

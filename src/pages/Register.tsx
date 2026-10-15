@@ -76,7 +76,7 @@ export default function Register() {
             <h1 className="text-4xl font-black leading-tight tracking-tight">
               成为
               <br />
-              <span className="bg-gradient-to-r from-brand to-star bg-clip-text text-transparent">星辰旅人</span>
+              <span className="bg-gradient-to-r from-brand to-star bg-clip-text text-transparent">Starlr 旅人</span>
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-muted">
               每个账号都有唯一 UID，从 1 开始计数。

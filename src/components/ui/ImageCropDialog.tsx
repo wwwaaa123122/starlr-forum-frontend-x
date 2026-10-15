@@ -17,6 +17,7 @@ export function ImageCropDialog({
   aspect,
   circular = false,
   preview = false,
+  maxEdge = 0,
   onCancel,
   onConfirm,
 }: {
@@ -28,6 +29,8 @@ export function ImageCropDialog({
   circular?: boolean;
   /** 底部显示所见即所得预览条（背景图） */
   preview?: boolean;
+  /** 导出长边上限（px），0 = 不限制。头像 512 / 背景图 1920，避免上传原图尺寸的大文件 */
+  maxEdge?: number;
   onCancel: () => void;
   onConfirm: (file: File) => void;
 }) {
@@ -91,8 +94,12 @@ export function ImageCropDialog({
         img.onerror = () => reject(new Error('图片读取失败'));
         img.src = src;
       });
-      const w = Math.max(1, Math.round(areaPixels.width));
-      const h = Math.max(1, Math.round(areaPixels.height));
+      // 长边超限时等比缩小导出（头像显示最大 124px，512 已有 4x 余量）
+      const rawW = Math.max(1, Math.round(areaPixels.width));
+      const rawH = Math.max(1, Math.round(areaPixels.height));
+      const scale = maxEdge > 0 ? Math.min(1, maxEdge / Math.max(rawW, rawH)) : 1;
+      const w = Math.max(1, Math.round(rawW * scale));
+      const h = Math.max(1, Math.round(rawH * scale));
       const canvas = document.createElement('canvas');
       canvas.width = w;
       canvas.height = h;

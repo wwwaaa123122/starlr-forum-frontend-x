@@ -5,7 +5,7 @@
  */
 export const CANONICAL_HOST = 'forum.182030.xyz';
 const CANON = `https://${CANONICAL_HOST}`;
-const DEFAULT_DESC = '星辰旅人论坛 —— 一个把论坛装进时间线的社区。';
+const DEFAULT_DESC = 'Starlr Forum —— 一个把论坛装进时间线的社区。';
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -47,7 +47,7 @@ export function applySeo(input: SeoInput = {}) {
   upsertMeta('name', 'description', desc);
   upsertMeta('name', 'robots', input.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large');
   upsertLink('canonical', canonical);
-  upsertMeta('property', 'og:site_name', '星辰旅人论坛');
+  upsertMeta('property', 'og:site_name', 'Starlr Forum');
   upsertMeta('property', 'og:type', input.ogType ?? 'website');
   upsertMeta('property', 'og:title', input.title ?? document.title);
   upsertMeta('property', 'og:description', desc);
