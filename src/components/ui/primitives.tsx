@@ -106,8 +106,14 @@ export function Avatar({
   const hue = hueFromString(name ?? '');
   return (
     <span
-      className={cn('relative inline-flex shrink-0 overflow-hidden rounded-full bg-surface2', className)}
-      style={{ width: size, height: size }}
+      className={cn(
+        // align-top：inline 场景下按行盒顶部对齐，避免基线下延在父级框内留出底部空隙（头像偏移）
+        'relative inline-flex shrink-0 overflow-hidden rounded-full bg-surface2 align-top',
+        // 尺寸走 CSS 变量，className 里的 h-/w-（含 md: 等变体）可正常覆盖内联尺寸
+        'h-(--avatar-size) w-(--avatar-size)',
+        className,
+      )}
+      style={{ '--avatar-size': `${size}px` } as React.CSSProperties}
       onClick={onClick}
     >
       {src && !failed ? (
