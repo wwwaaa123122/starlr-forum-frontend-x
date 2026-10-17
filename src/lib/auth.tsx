@@ -31,7 +31,7 @@ interface AuthContextValue {
   login: (identifier: string, password: string, turnstileToken?: string) => Promise<AuthUserPayload>;
   register: (payload: {
     username: string;
-    email: string;
+    email?: string;
     password: string;
     nickname?: string;
     turnstileToken?: string;
@@ -173,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const register = useCallback(
-    async (payload: { username: string; email: string; password: string; nickname?: string; turnstileToken?: string }) => {
+    async (payload: { username: string; email?: string; password: string; nickname?: string; turnstileToken?: string }) => {
       const res = await registerApi(payload);
       applyTokens(res);
       setUser(res.user as MeUser);

@@ -91,18 +91,18 @@ export function Turnstile({ siteKey, onToken }: TurnstileProps) {
 }
 
 /** 获取站点配置（/api/config，含 Turnstile site key），仅成功结果写模块级缓存（失败下次重试） */
-let configCache: { turnstileSiteKey: string | null } | null = null;
+let configCache: { turnstileSiteKey: string | null; emailRequired: boolean } | null = null;
 
-export async function fetchSiteConfig(): Promise<{ turnstileSiteKey: string | null }> {
+export async function fetchSiteConfig(): Promise<{ turnstileSiteKey: string | null; emailRequired: boolean }> {
   if (configCache) return configCache;
   try {
-    const res = await api<{ turnstileSiteKey: string | null }>('/api/config');
+    const res = await api<{ turnstileSiteKey: string | null; emailRequired?: boolean }>('/api/config');
     if (!res || typeof res !== 'object') throw new Error('站点配置响应异常');
-    const config = { turnstileSiteKey: res.turnstileSiteKey ?? null };
+    const config = { turnstileSiteKey: res.turnstileSiteKey ?? null, emailRequired: res.emailRequired !== false };
     configCache = config;
     return config;
   } catch {
     // 失败/非 ok 不写缓存，下次进入页面重试
-    return { turnstileSiteKey: null };
+    return { turnstileSiteKey: null, emailRequired: true };
   }
 }

@@ -17,8 +17,12 @@ export default function Register() {
   const [siteKey, setSiteKey] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
 
+  const [emailRequired, setEmailRequired] = useState(true);
   useEffect(() => {
-    void fetchSiteConfig().then((cfg) => setSiteKey(cfg.turnstileSiteKey));
+    void fetchSiteConfig().then((cfg) => {
+      setSiteKey(cfg.turnstileSiteKey);
+      setEmailRequired(cfg.emailRequired !== false);
+    });
   }, []);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -32,7 +36,7 @@ export default function Register() {
     try {
       const user = await register({
         username: form.username.trim(),
-        email: form.email.trim(),
+        ...(emailRequired ? { email: form.email.trim() } : {}),
         password: form.password,
         nickname: form.nickname.trim() || undefined,
         turnstileToken: turnstileToken || undefined,
@@ -53,8 +57,9 @@ export default function Register() {
           <MailCheck size={44} className="mx-auto text-boost" strokeWidth={1.4} />
           <h1 className="mt-4 text-2xl font-extrabold">启程成功 ✦</h1>
           <p className="mt-2 text-[15px] leading-relaxed text-muted">
-            激活邮件已发送至你的邮箱。验证邮箱后即可发帖与回复；
-            未验证前你可以自由浏览。
+            {emailRequired
+              ? '激活邮件已发送至你的邮箱。验证邮箱后即可发帖与回复；未验证前你可以自由浏览。'
+              : '账号已创建，直接登录即可开始使用。'}
           </p>
           <div className="mt-6 flex justify-center gap-3">
             <Button pill onClick={() => navigate('/')}>
@@ -110,7 +115,9 @@ export default function Register() {
               <span className="mb-1.5 block text-[13px] font-semibold text-muted">邮箱 *</span>
               <div className="relative">
                 <AtSign size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" />
-                <Input type="email" value={form.email} onChange={set('email')} placeholder="邮箱" required className="pl-10" />
+                {emailRequired && (
+                  <Input type="email" value={form.email} onChange={set('email')} placeholder="邮箱" required className="pl-10" />
+                )}
               </div>
             </label>
             <label className="block">

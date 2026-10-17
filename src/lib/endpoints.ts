@@ -21,6 +21,8 @@ export interface SiteConfig {
   siteName: string;
   turnstileSiteKey: string | null;
   registrationEnabled: boolean;
+  /** 注册是否必须邮箱（false = 用户名+密码直注）；旧后端无此字段时按 true 处理 */
+  emailRequired?: boolean;
 }
 
 export const getConfig = () => api<SiteConfig>('/api/config');
@@ -80,7 +82,7 @@ export const login = (identifier: string, password: string, turnstileToken?: str
 
 export const register = (payload: {
   username: string;
-  email: string;
+  email?: string;
   password: string;
   nickname?: string;
   turnstileToken?: string;
