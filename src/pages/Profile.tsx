@@ -163,9 +163,14 @@ export default function Profile() {
       <div className="px-4 pb-1 pt-3">
         <h1 className="flex items-center gap-2 text-xl font-extrabold">
           {name}
-          {profile.role === 'admin' && (
+          {profile.role === 'admin' && profile.uid === 1 && (
             <span className="inline-flex items-center gap-0.5 rounded-full bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand">
               <Star size={11} className="fill-current" /> 站长
+            </span>
+          )}
+          {profile.role === 'admin' && profile.uid !== 1 && (
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-brand-soft px-2 py-0.5 text-xs font-bold text-brand">
+              <Star size={11} className="fill-current" /> 管理员
             </span>
           )}
           {profile.role === 'moderator' && (

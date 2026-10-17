@@ -165,9 +165,14 @@ export const PostCard = memo(function PostCard({
               >
                 {displayName(post.authorNickname ?? post.authorName)}
               </Link>
-              {post.authorRole === 'admin' && (
+              {post.authorRole === 'admin' && post.authorUid === 1 && (
                 <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-brand">
                   <Star size={10} className="fill-current" /> 站长
+                </span>
+              )}
+              {post.authorRole === 'admin' && post.authorUid !== 1 && (
+                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-brand">
+                  <Star size={10} className="fill-current" /> 管理员
                 </span>
               )}
               {post.authorRole === 'moderator' && (
