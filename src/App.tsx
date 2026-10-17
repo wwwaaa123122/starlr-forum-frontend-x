@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation, useNavigationType } from 'react-r
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { applySeo } from '@/lib/seo';
 import { AppShell } from '@/components/layout/AppShell';
+import { VerifyEmailPage, UnverifiedBanner } from '@/pages/VerifyEmail';
 import AdminLayout from '@/pages/admin/AdminLayout';
 import AdminOverview from '@/pages/admin/AdminOverview';
 import AdminUsers from '@/pages/admin/AdminUsers';
@@ -101,6 +102,7 @@ function ScrollManager() {
 export default function App() {
   return (
     <AppShell>
+      <UnverifiedBanner />
       <SeoBridge />
       <ScrollManager />
       <PageTransition>
@@ -116,6 +118,7 @@ export default function App() {
         <Route path="/u/:username" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/auth/github/done" element={<OAuthCallback />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
