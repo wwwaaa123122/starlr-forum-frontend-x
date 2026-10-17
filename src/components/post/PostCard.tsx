@@ -37,8 +37,6 @@ interface PostCardProps {
   /** 详情页正文全量渲染 */
   rich?: false;
   showCategory?: boolean;
-  /** 个人主页等场景：作者即本人，隐藏头像与名字行 */
-  hideAuthor?: boolean;
   onDeleted?: () => void;
 }
 
@@ -47,7 +45,6 @@ export const PostCard = memo(function PostCard({
   liked = false,
   favorited = false,
   showCategory = true,
-  hideAuthor = false,
   onDeleted,
 }: PostCardProps) {
   const { user } = useAuth();
@@ -147,38 +144,32 @@ export const PostCard = memo(function PostCard({
       className="post-card cursor-pointer border-b border-line px-4 py-3"
       onClick={() => navigate(`/post/${post.id}`)}
     >
-      <div className={cn('flex gap-3', hideAuthor && 'flex-col gap-0')}>
-        {!hideAuthor && (
-          <Link to={`/u/${post.authorName}`} onClick={(e) => e.stopPropagation()} className="shrink-0">
-            <Avatar src={post.authorAvatar} name={displayName(post.authorNickname ?? post.authorName)} size={42} />
-          </Link>
-        )}
+      <div className="flex gap-3">
+        <Link to={`/u/${post.authorName}`} onClick={(e) => e.stopPropagation()} className="shrink-0">
+          <Avatar src={post.authorAvatar} name={displayName(post.authorNickname ?? post.authorName)} size={42} />
+        </Link>
 
         <div className="min-w-0 flex-1">
-          {/* 头部行：昵称 @用户名 · 时间 + 菜单（hideAuthor 时只留时间与菜单） */}
-          {!hideAuthor && (
-            <div className="flex items-center gap-1 leading-snug">
-              <Link
-                to={`/u/${post.authorName}`}
-                onClick={(e) => e.stopPropagation()}
-                className="truncate text-[15px] font-bold hover:underline"
-              >
-                {displayName(post.authorNickname ?? post.authorName)}
-              </Link>
-              {post.authorRole === 'admin' && (
-                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-brand">
-                  <Star size={10} className="fill-current" /> 站长
-                </span>
-              )}
-              {post.authorRole === 'moderator' && (
-                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-boost">
-                  <Sparkles size={10} /> 版主
-                </span>
-              )}
-              <span className="truncate text-[15px] text-muted">@{post.authorName}</span>
-            </div>
-          )}
+          {/* 头部行：昵称 @用户名 · 时间 + 菜单 */}
           <div className="flex items-center gap-1 leading-snug">
+            <Link
+              to={`/u/${post.authorName}`}
+              onClick={(e) => e.stopPropagation()}
+              className="truncate text-[15px] font-bold hover:underline"
+            >
+              {displayName(post.authorNickname ?? post.authorName)}
+            </Link>
+            {post.authorRole === 'admin' && (
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-brand">
+                <Star size={10} className="fill-current" /> 站长
+              </span>
+            )}
+            {post.authorRole === 'moderator' && (
+              <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-brand-soft px-1.5 text-[11px] font-bold text-boost">
+                <Sparkles size={10} /> 版主
+              </span>
+            )}
+            <span className="truncate text-[15px] text-muted">@{post.authorName}</span>
             <span className="text-muted">·</span>
             <time className="shrink-0 text-[15px] text-muted" title={post.createdAt}>
               {relativeTime(post.createdAt)}

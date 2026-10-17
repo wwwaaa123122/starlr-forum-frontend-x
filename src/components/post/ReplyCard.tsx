@@ -17,15 +17,12 @@ export function ReplyCard({
   postId,
   showPostTitle,
   depth = 0,
-  hideAuthor,
   onReply,
 }: {
   reply: Reply;
   postId?: string;
   showPostTitle?: boolean;
   depth?: number;
-  /** 个人主页等场景：作者即本人，隐藏头像与名字 */
-  hideAuthor?: boolean;
   onReply?: (reply: Reply) => void;
 }) {
   const { user } = useAuth();
@@ -93,22 +90,19 @@ export function ReplyCard({
       )}
     >
       <div className="flex gap-3">
-        {!hideAuthor && (
-          <Link to={`/u/${reply.authorName}`} className="shrink-0">
-            <Avatar src={reply.authorAvatar} name={displayName(reply.authorNickname ?? reply.authorName)} size={depth > 0 ? 34 : 40} />
-          </Link>
-        )}
+        <Link to={`/u/${reply.authorName}`} className="shrink-0">
+          <Avatar src={reply.authorAvatar} name={displayName(reply.authorNickname ?? reply.authorName)} size={depth > 0 ? 34 : 40} />
+        </Link>
         <div className="min-w-0 flex-1">
-          {!hideAuthor ? (
-            <div className="flex items-center gap-1 text-[15px] leading-snug">
-              <Link to={`/u/${reply.authorName}`} className="truncate font-bold hover:underline">
-                {displayName(reply.authorNickname ?? reply.authorName)}
-              </Link>
-              <span className="truncate text-muted">@{reply.authorName}</span>
-              <span className="text-muted">·</span>
-              <time className="shrink-0 text-muted">{relativeTime(reply.createdAt)}</time>
-              {reply.editedAt && <span className="shrink-0 text-xs text-faint">已编辑</span>}
-              <div className="ml-auto shrink-0">
+          <div className="flex items-center gap-1 text-[15px] leading-snug">
+            <Link to={`/u/${reply.authorName}`} className="truncate font-bold hover:underline">
+              {displayName(reply.authorNickname ?? reply.authorName)}
+            </Link>
+            <span className="truncate text-muted">@{reply.authorName}</span>
+            <span className="text-muted">·</span>
+            <time className="shrink-0 text-muted">{relativeTime(reply.createdAt)}</time>
+            {reply.editedAt && <span className="shrink-0 text-xs text-faint">已编辑</span>}
+            <div className="ml-auto shrink-0">
               <Dropdown
                 trigger={({ toggle }) => (
                   <button
@@ -148,56 +142,8 @@ export function ReplyCard({
                   </>
                 )}
               </Dropdown>
-              </div>
             </div>
-          ) : (
-            <div className="flex items-center gap-1 text-[15px] leading-snug">
-              <span className="text-muted">·</span>
-              <time className="shrink-0 text-muted">{relativeTime(reply.createdAt)}</time>
-              {reply.editedAt && <span className="shrink-0 text-xs text-faint">已编辑</span>}
-              <div className="ml-auto shrink-0">
-                <Dropdown
-                  trigger={({ toggle }) => (
-                    <button
-                      onClick={toggle}
-                      aria-label="更多"
-                      className="btn-icon focus-ring -mr-2 h-8 w-8 text-muted hover:bg-brand-soft hover:text-brand"
-                    >
-                      <MoreHorizontal size={16} />
-                    </button>
-                  )}
-                >
-                  {(close) => (
-                    <>
-                      {isAuthor && (
-                        <MenuItem
-                          icon={<Pencil size={15} />}
-                          onClick={() => {
-                            close();
-                            setEditing(true);
-                          }}
-                        >
-                          编辑
-                        </MenuItem>
-                      )}
-                      {(isAuthor || canModerate) && (
-                        <MenuItem
-                          danger
-                          icon={<Trash2 size={15} />}
-                          onClick={() => {
-                            close();
-                            if (confirm('确定删除这条回复吗？')) deleteMut.mutate();
-                          }}
-                        >
-                          删除
-                        </MenuItem>
-                      )}
-                    </>
-                  )}
-                </Dropdown>
-              </div>
-            </div>
-          )}
+          </div>
 
           {reply.replyToUserName && (
             <p className="flex items-center gap-1 text-[13px] text-muted">

@@ -224,7 +224,7 @@ export default function Profile() {
         ) : (
           <>
             {posts.map((p) => (
-              <PostCard key={p.id} post={p} showCategory={false} hideAuthor />
+              <PostCard key={p.id} post={p} showCategory={false} />
             ))}
             {postsQuery.hasNextPage && (
               <LoadMore onClick={() => void postsQuery.fetchNextPage()} loading={postsQuery.isFetchingNextPage} />
@@ -243,7 +243,7 @@ export default function Profile() {
         ) : (
           <>
             {replies.map((r) => (
-              <ReplyCard key={r.id} reply={r} showPostTitle hideAuthor />
+              <ReplyCard key={r.id} reply={r} showPostTitle />
             ))}
             {repliesQuery.hasNextPage && (
               <LoadMore onClick={() => void repliesQuery.fetchNextPage()} loading={repliesQuery.isFetchingNextPage} />
