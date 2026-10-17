@@ -181,3 +181,46 @@ export function TermsPage() {
     </LegalShell>
   );
 }
+
+export function LicensePage() {
+  return (
+    <LegalShell icon={<FileText className="size-5" />} title="开源协议" updated="2026 年 10 月 17 日">
+      <div>
+        <h2>授权</h2>
+        <p>
+          本项目（Starlr Forum：后端、Web 前端与 Android 客户端）基于{' '}
+          <a className="text-primary hover:underline" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer">GNU GPL-3.0-or-later</a>{' '}
+          协议开源，完整协议文本见各仓库根目录的 LICENSE 文件。
+        </p>
+      </div>
+      <div>
+        <h2>你的权利</h2>
+        <ul className="list-disc space-y-1.5 pl-5">
+          <li>自由使用、学习、修改本项目代码，无需支付任何费用；</li>
+          <li>自由分发原版或修改版；</li>
+          <li>用于商业目的同样允许（需遵守下述义务）。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>你的义务</h2>
+        <ul className="list-disc space-y-1.5 pl-5">
+          <li>基于本项目的二次开发作品必须同样以 GPL-3.0 协议开源；</li>
+          <li>保留原始版权声明与协议文本；</li>
+          <li>注明对原项目的修改。</li>
+        </ul>
+      </div>
+      <div>
+        <h2>免责声明</h2>
+        <p>本项目按「现状」提供，不附带任何担保。使用本项目产生的任何问题由使用者自行承担。</p>
+      </div>
+      <div>
+        <h2>源码仓库</h2>
+        <ul className="list-disc space-y-1.5 pl-5">
+          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-backend" target="_blank" rel="noreferrer">starlr-forum-backend</a>（Cloudflare Workers 后端）</li>
+          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-frontend-x" target="_blank" rel="noreferrer">starlr-forum-frontend-x</a>（Web 前端）</li>
+          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-android" target="_blank" rel="noreferrer">starlr-forum-android</a>（Android 客户端）</li>
+        </ul>
+      </div>
+    </LegalShell>
+  );
+}

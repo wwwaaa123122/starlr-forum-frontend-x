@@ -20,7 +20,12 @@ export function RightRail({ hidden }: { hidden?: boolean }) {
           <Link to="/privacy" className="hover:underline">隐私政策</Link>
           <Link to="/privacy" className="hover:underline">Cookie</Link>
         </div>
-        <div className="mt-1">© 2025 Starlr Forum</div>
+        <div className="mt-1">© 2025-2026 Starlr Forum · GPL-3.0</div>
+        <div className="mt-0.5">
+          <a href="/license" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">开源协议</a>
+          <span className="mx-1 text-xs text-muted">·</span>
+          <a href="https://github.com/wwwaaa123122" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">GitHub</a>
+        </div>
       </footer>
     </aside>
   );

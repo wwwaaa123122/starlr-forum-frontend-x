@@ -32,7 +32,7 @@ import Register from '@/pages/Register';
 import Settings from '@/pages/Settings';
 import Categories from '@/pages/Categories';
 import NotFound from '@/pages/NotFound';
-import { PrivacyPage, TermsPage } from '@/pages/Legal';
+import { PrivacyPage, LicensePage, TermsPage } from '@/pages/Legal';
 
 /** 登录守卫 */
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -122,6 +122,7 @@ export default function App() {
         <Route path="/auth/github/done" element={<OAuthCallback />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/license" element={<LicensePage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
