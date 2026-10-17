@@ -20,6 +20,7 @@ import { ActionButton } from '@/components/post/PostCard';
 import { Composer } from '@/components/post/Composer';
 import { ReplyCard } from '@/components/post/ReplyCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
+import { RoleBadge } from '@/components/post/RoleBadge';
 import { Avatar, Button, EmptyState, Skeleton } from '@/components/ui/primitives';
 import { RichText } from '@/lib/markdown';
 import { displayName, formatCount, fullTime, tagsOf } from '@/lib/utils';
@@ -201,7 +202,10 @@ export default function PostDetail() {
             >
               {displayName(post.authorNickname ?? post.authorName)}
             </button>
-            <p className="text-[15px] text-muted">@{post.authorName}</p>
+            <p className="flex items-center gap-1 text-[15px] text-muted">
+              @{post.authorName}
+              <RoleBadge role={post.authorRole} uid={post.authorUid} />
+            </p>
           </div>
         </div>
 

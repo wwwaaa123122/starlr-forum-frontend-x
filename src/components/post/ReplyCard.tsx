@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { deleteReply, likeReply, unlikeReply, updateReply } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
 import { ActionButton } from './PostCard';
+import { RoleBadge } from '@/components/post/RoleBadge';
 import { Avatar, Button, Dropdown, MenuItem, Textarea } from '@/components/ui/primitives';
 import { RichText } from '@/lib/markdown';
 import { cn, displayName, relativeTime } from '@/lib/utils';
@@ -104,6 +105,7 @@ export function ReplyCard({
               <Link to={`/u/${reply.authorName}`} className="truncate font-bold hover:underline">
                 {displayName(reply.authorNickname ?? reply.authorName)}
               </Link>
+                <RoleBadge role={reply.authorRole} uid={reply.authorUid} />
               <span className="truncate text-muted">@{reply.authorName}</span>
               <span className="text-muted">·</span>
               <time className="shrink-0 text-muted">{relativeTime(reply.createdAt)}</time>
