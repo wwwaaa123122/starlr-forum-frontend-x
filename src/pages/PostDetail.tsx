@@ -134,14 +134,29 @@ export default function PostDetail() {
   const { topLevel, childrenMap } = useMemo(() => {
     const top: Reply[] = [];
     const map = new Map<string, Reply[]>();
-    for (const r of replies) {
-      if (r.parentReplyId) {
-        const list = map.get(r.parentReplyId) ?? [];
-        list.push(r);
-        map.set(r.parentReplyId, list);
-      } else {
-        top.push(r);
+    const topIds = new Set(replies.filter((r) => !r.parentReplyId).map((r) => r.id));
+    // 回复只展示两层：顶层 + 子回复；挂在自己子回复下的回复提升到顶层该楼（避免深层嵌套丢失）
+    const rootOf = (r: Reply): string | null => {
+      const seen = new Set<string>();
+      let cur = r;
+      while (cur.parentReplyId && !seen.has(cur.id)) {
+        seen.add(cur.id);
+        if (topIds.has(cur.parentReplyId)) return cur.parentReplyId;
+        const parent = replies.find((x) => x.id === cur.parentReplyId);
+        if (!parent) return cur.parentReplyId; // 父被删除等异常情况：仍挂在原 parent 上
+        cur = parent;
       }
+      return null;
+    };
+    for (const r of replies) {
+      if (!r.parentReplyId) {
+        top.push(r);
+        continue;
+      }
+      const key = rootOf(r) ?? r.parentReplyId;
+      const list = map.get(key) ?? [];
+      list.push(r);
+      map.set(key, list);
     }
     return { topLevel: top, childrenMap: map };
   }, [replies]);
