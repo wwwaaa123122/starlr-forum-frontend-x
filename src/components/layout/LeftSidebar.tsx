@@ -20,7 +20,7 @@ import { useAuth } from '@/lib/auth';
 import { ShieldCheck } from 'lucide-react';
 import { Avatar, Button, Dropdown, MenuItem } from '@/components/ui/primitives';
 import { toggleTheme, useTheme } from '@/lib/theme';
-import { cn } from '@/lib/utils';
+import { cn , displayName } from '@/lib/utils';
 
 interface NavItem {
   to: string;
@@ -131,10 +131,10 @@ export function LeftSidebar() {
                 onClick={toggle}
                 className="focus-ring flex w-full items-center gap-2.5 rounded-full p-2 transition hover:bg-surface2 xl:px-3"
               >
-                <Avatar src={user.avatarUrl} name={user.nickname || user.username} size={40} />
+                <Avatar src={user.avatarUrl} name={displayName(user.nickname || user.username)} size={40} />
                 <span className="hidden min-w-0 flex-1 flex-col items-start leading-tight xl:flex">
                   <span className="max-w-[120px] truncate text-[15px] font-bold">
-                    {user.nickname || user.username}
+                    {displayName(user.nickname || user.username)}
                   </span>
                   <span className="max-w-[120px] truncate text-sm text-muted">@{user.username}</span>
                 </span>

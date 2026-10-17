@@ -4,7 +4,7 @@ import { ArrowLeft, Menu } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { Avatar, IconButton } from '@/components/ui/primitives';
 import { useMobileDrawer } from './AppShell';
-import { cn } from '@/lib/utils';
+import { cn , displayName } from '@/lib/utils';
 
 export function ColumnHeader({
   title,
@@ -42,7 +42,7 @@ export function ColumnHeader({
             aria-label="打开菜单"
           >
             {user ? (
-              <Avatar src={user.avatarUrl} name={user.nickname || user.username} size={32} />
+              <Avatar src={user.avatarUrl} name={displayName(user.nickname || user.username)} size={32} />
             ) : (
               <span className="btn-icon flex h-8 w-8 items-center justify-center text-ink">
                 <Menu size={22} />

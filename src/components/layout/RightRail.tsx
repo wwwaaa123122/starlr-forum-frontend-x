@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Hash, Sparkles } from 'lucide-react';
 import { hotTags, listCategories, searchUsers } from '@/lib/endpoints';
-import { formatCount } from '@/lib/utils';
+import { formatCount , displayName } from '@/lib/utils';
 import { Avatar, Skeleton } from '@/components/ui/primitives';
 
 export function RightRail({ hidden }: { hidden?: boolean }) {
@@ -171,9 +171,9 @@ export function UserSearchResults({ q, limit = 5 }: { q: string; limit?: number 
             to={`/u/${u.username}`}
             className="flex items-center gap-3 px-4 py-2.5 transition hover:bg-surface2"
           >
-            <Avatar src={u.avatarUrl} name={u.nickname || u.username} size={40} />
+            <Avatar src={u.avatarUrl} name={displayName(u.nickname || u.username)} size={40} />
             <span className="min-w-0 flex-1 leading-tight">
-              <span className="block truncate text-[15px] font-bold">{u.nickname || u.username}</span>
+              <span className="block truncate text-[15px] font-bold">{displayName(u.nickname || u.username)}</span>
               <span className="block truncate text-sm text-muted">@{u.username}</span>
             </span>
           </Link>

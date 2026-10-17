@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { toggleTheme, useTheme } from '@/lib/theme';
 import { Avatar } from '@/components/ui/primitives';
 import { drawerNavItems } from './LeftSidebar';
-import { cn } from '@/lib/utils';
+import { cn , displayName } from '@/lib/utils';
 
 export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user, unread, logout } = useAuth();
@@ -60,9 +60,9 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
         {/* 账号区 */}
         {user ? (
           <Link to={`/u/${user.username}`} onClick={onClose} className="mb-6 flex items-center gap-3">
-            <Avatar src={user.avatarUrl} name={user.nickname || user.username} size={48} />
+            <Avatar src={user.avatarUrl} name={displayName(user.nickname || user.username)} size={48} />
             <span className="min-w-0 leading-tight">
-              <span className="block truncate text-lg font-extrabold">{user.nickname || user.username}</span>
+              <span className="block truncate text-lg font-extrabold">{displayName(user.nickname || user.username)}</span>
               <span className="block truncate text-sm text-muted">@{user.username}</span>
             </span>
           </Link>

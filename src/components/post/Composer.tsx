@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { createPost, createReply, listCategories, searchUsers, uploadImage } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
 import { Avatar, Button, Dropdown, MenuItem } from '@/components/ui/primitives';
-import { cn } from '@/lib/utils';
+import { cn , displayName } from '@/lib/utils';
 
 const TITLE_MAX = 120;
 const CONTENT_MAX = 50_000;
@@ -192,7 +192,7 @@ export function Composer({
 
   return (
     <div className={cn('flex gap-3', compact ? 'px-4 py-3' : 'px-4 py-3')}>
-      <Avatar src={user.avatarUrl} name={user.nickname || user.username} size={42} className="shrink-0" />
+      <Avatar src={user.avatarUrl} name={displayName(user.nickname || user.username)} size={42} className="shrink-0" />
       <div className="min-w-0 flex-1">
         {/* 回复目标提示 */}
         {mode === 'reply' && replyTo && (
@@ -246,9 +246,9 @@ export function Composer({
                   }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-surface2"
                 >
-                  <Avatar src={u.avatarUrl} name={u.nickname || u.username} size={28} />
+                  <Avatar src={u.avatarUrl} name={displayName(u.nickname || u.username)} size={28} />
                   <span className="min-w-0">
-                    <span className="block truncate font-semibold">{u.nickname || u.username}</span>
+                    <span className="block truncate font-semibold">{displayName(u.nickname || u.username)}</span>
                     <span className="block truncate text-xs text-muted">@{u.username}</span>
                   </span>
                 </button>
