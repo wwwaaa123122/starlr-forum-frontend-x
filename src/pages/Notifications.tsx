@@ -18,6 +18,7 @@ import { useAuth } from '@/lib/auth';
 import { Avatar, Button, EmptyState, Tabs } from '@/components/ui/primitives';
 import { cn, relativeTime } from '@/lib/utils';
 import type { NotificationItem } from '@/lib/types';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 function toBool(v: number | boolean | undefined): boolean {
   return v === 1 || v === true;
@@ -41,13 +42,14 @@ function parseSystemContent(content: string | null): { title?: string; body?: st
 }
 
 export default function Notifications() {
+  const cfg = useSiteConfig();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { refreshUnread } = useAuth();
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    document.title = '通知 - Starlr Forum';
+    document.title = siteTitle(cfg, '通知');
   }, []);
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery({

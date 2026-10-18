@@ -7,10 +7,12 @@ import { meFavorites } from '@/lib/endpoints';
 import { PostCard } from '@/components/post/PostCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
 import { EmptyState } from '@/components/ui/primitives';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function Bookmarks() {
+  const cfg = useSiteConfig();
   useEffect(() => {
-    document.title = '书签 - Starlr Forum';
+    document.title = siteTitle(cfg, '书签');
   }, []);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({

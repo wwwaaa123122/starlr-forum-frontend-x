@@ -38,8 +38,10 @@ import { useAuth } from '@/lib/auth';
 import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primitives';
 import { assetUrl } from '@/lib/base-url';
 import { cn, displayName, relativeTime } from '@/lib/utils';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function Settings() {
+  const cfg = useSiteConfig();
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -52,7 +54,7 @@ export default function Settings() {
   const [cropTarget, setCropTarget] = useState<{ file: File; kind: 'avatar' | 'background' } | null>(null);
 
   useEffect(() => {
-    document.title = '设置 - Starlr Forum';
+    document.title = siteTitle(cfg, '设置');
   }, []);
 
   useEffect(() => {

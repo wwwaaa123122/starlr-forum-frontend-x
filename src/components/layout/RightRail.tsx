@@ -6,8 +6,10 @@ import { Search, Hash, Sparkles } from 'lucide-react';
 import { hotTags, listCategories, searchUsers } from '@/lib/endpoints';
 import { formatCount , displayName } from '@/lib/utils';
 import { Avatar, Skeleton } from '@/components/ui/primitives';
+import { useSiteConfig } from '@/lib/useSiteConfig';
 
 export function RightRail({ hidden }: { hidden?: boolean }) {
+  const cfg = useSiteConfig();
   if (hidden) return null;
   return (
     <aside className="sticky top-0 hidden h-dvh w-[350px] shrink-0 flex-col gap-4 overflow-y-auto px-5 py-2 pb-8 lg:flex">
@@ -20,7 +22,7 @@ export function RightRail({ hidden }: { hidden?: boolean }) {
           <Link to="/privacy" className="hover:underline">隐私政策</Link>
           <Link to="/privacy" className="hover:underline">Cookie</Link>
         </div>
-        <div className="mt-1">© 2025-2026 Starlr Forum · GPL-3.0</div>
+        <div className="mt-1">© 2025-2026 {cfg?.siteName ?? 'Forum'} · GPL-3.0</div>
         <div className="mt-0.5">
           <a href="/license" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">开源协议</a>
           <span className="mx-1 text-xs text-muted">·</span>

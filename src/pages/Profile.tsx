@@ -13,8 +13,10 @@ import { PostSkeleton } from '@/components/post/PostSkeleton';
 import { ReplyCard } from '@/components/post/ReplyCard';
 import { assetUrl } from '@/lib/base-url';
 import { cn, displayName, formatCount, joinedMonth } from '@/lib/utils';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function Profile() {
+  const cfg = useSiteConfig();
   const { username = '' } = useParams();
   const navigate = useNavigate();
   const { user: me } = useAuth();
@@ -33,7 +35,7 @@ export default function Profile() {
 
   useEffect(() => {
     applySeo({
-      title: profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) - Starlr Forum` : 'Starlr Forum',
+      title: profile ? `${displayName(profile.nickname || profile.username)} (@${profile.username}) ` : siteTitle(cfg),
       description: profile?.bio ?? undefined,
       path: profile ? `/u/${encodeURIComponent(profile.username)}` : undefined,
     });

@@ -7,6 +7,7 @@ import { ColumnHeader } from '@/components/layout/ColumnHeader';
 import { listCategories } from '@/lib/endpoints';
 import { Skeleton, EmptyState } from '@/components/ui/primitives';
 import { formatCount } from '@/lib/utils';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 const CATEGORY_ICONS: Record<string, string> = {
   talk: '💬',
@@ -18,8 +19,9 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 export default function Categories() {
+  const cfg = useSiteConfig();
   useEffect(() => {
-    document.title = '板块 - Starlr Forum';
+    document.title = siteTitle(cfg, '板块');
   }, []);
   const { data, isLoading } = useQuery({ queryKey: ['categories'], queryFn: listCategories });
 

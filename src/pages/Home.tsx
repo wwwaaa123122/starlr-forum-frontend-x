@@ -11,8 +11,10 @@ import { Composer } from '@/components/post/Composer';
 import { ComposerModal } from '@/components/post/ComposerModal';
 import { Button, EmptyState, Tabs } from '@/components/ui/primitives';
 import { useAuth } from '@/lib/auth';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function Home() {
+  const cfg = useSiteConfig();
   const [searchParams] = useSearchParams();
   const [tab, setTab] = useState<'new' | 'hot'>('new');
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function Home() {
   const tag = searchParams.get('tag') ?? undefined;
 
   useEffect(() => {
-    document.title = 'Starlr Forum';
+    document.title = siteTitle(cfg);
   }, []);
 
   const {

@@ -9,8 +9,10 @@ import { PostCard } from '@/components/post/PostCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
 import { Avatar, EmptyState, Skeleton, Tabs } from '@/components/ui/primitives';
 import { formatCount , displayName } from '@/lib/utils';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function Explore() {
+  const cfg = useSiteConfig();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tab, setTab] = useState<'post' | 'user'>('post');
   const [input, setInput] = useState(searchParams.get('q') ?? '');
@@ -19,7 +21,7 @@ export default function Explore() {
   const q = searchParams.get('q') ?? '';
 
   useEffect(() => {
-    document.title = '探索 - Starlr Forum';
+    document.title = siteTitle(cfg, '探索');
   }, []);
 
   const submit = (value: string) => {

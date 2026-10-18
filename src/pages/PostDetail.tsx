@@ -26,8 +26,10 @@ import { RichText } from '@/lib/markdown';
 import { displayName, formatCount, fullTime, tagsOf } from '@/lib/utils';
 import type { Reply } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 export default function PostDetail() {
+  const cfg = useSiteConfig();
   const { id = '' } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -121,7 +123,7 @@ export default function PostDetail() {
   useEffect(() => {
     applySeo({
       // 文章页标题直接用文章标题；数据未到时用站点名兜底
-      title: post ? post.title : 'Starlr Forum',
+      title: post ? post.title : siteTitle(cfg),
       description: post?.content
         ? post.content.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`~\-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 150)
         : undefined,

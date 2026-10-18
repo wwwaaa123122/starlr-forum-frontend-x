@@ -3,9 +3,13 @@
  * 百度等不渲染 JS 的爬虫由 Worker 端动态渲染兜底（backend/src/routes/seo.ts）。
  * canonical 一律归并到主域，避免 x / forum / f 三域重复内容。
  */
-export const CANONICAL_HOST = 'forum.182030.xyz';
-const CANON = `https://${CANONICAL_HOST}`;
-const DEFAULT_DESC = 'Starlr Forum —— 一个把论坛装进时间线的社区。';
+/**
+ * canonical 主域：默认跟随当前访问域名（自部署无需改代码）；
+ * 需要 SEO 收录归并时在管理后台「SEO 服务」配置 canonical_host（Worker 端渲染与 sitemap 用）。
+ */
+export const CANONICAL_HOST = location.hostname;
+const CANON = `${location.origin}`;
+const DEFAULT_DESC = '一个轻量、现代的社区论坛。';
 
 function upsertMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -47,7 +51,7 @@ export function applySeo(input: SeoInput = {}) {
   upsertMeta('name', 'description', desc);
   upsertMeta('name', 'robots', input.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large');
   upsertLink('canonical', canonical);
-  upsertMeta('property', 'og:site_name', 'Starlr Forum');
+  upsertMeta('property', 'og:site_name', document.title.split(' - ').pop() || 'Forum');
   upsertMeta('property', 'og:type', input.ogType ?? 'website');
   upsertMeta('property', 'og:title', input.title ?? document.title);
   upsertMeta('property', 'og:description', desc);

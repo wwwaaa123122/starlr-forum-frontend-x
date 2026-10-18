@@ -9,9 +9,11 @@ import { Button, Input } from '@/components/ui/primitives';
 import { Turnstile, fetchSiteConfig } from '@/components/Turnstile';
 import { githubOAuthStartUrl } from '@/lib/endpoints';
 import { GithubIcon } from '@/components/GithubIcon';
+import { useSiteConfig } from '@/lib/useSiteConfig';
 
 
 export default function Login() {
+  const cfg = useSiteConfig();
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -80,7 +82,7 @@ export default function Login() {
               发帖、回复、收藏，让每颗星都被看见。
             </p>
           </div>
-          <p className="text-xs text-faint">Starlr Forum · Cloudflare Serverless</p>
+          <p className="text-xs text-faint">{cfg?.siteName ?? 'Forum'} · Cloudflare Serverless</p>
         </div>
 
         {/* 表单区 */}

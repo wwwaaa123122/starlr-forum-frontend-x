@@ -19,6 +19,12 @@ import type {
 
 export interface SiteConfig {
   siteName: string;
+  /** 站点标语（可选，后端 config:site） */
+  siteTagline?: string;
+  /** 站点描述（可选） */
+  siteDescription?: string;
+  /** 页脚文案（可选） */
+  siteFooter?: string;
   turnstileSiteKey: string | null;
   registrationEnabled: boolean;
   /** 注册是否必须邮箱（false = 用户名+密码直注）；旧后端无此字段时按 true 处理 */

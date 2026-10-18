@@ -1,7 +1,8 @@
-/** 法律文档页（/terms 用户协议、/privacy 隐私政策）—— 与主站 i.182030.xyz 内容一致 */
+/** 法律文档页（/terms 用户协议、/privacy 隐私政策）—— 站点法律文档 */
 import { useEffect } from 'react';
 import { FileText, ShieldCheck } from 'lucide-react';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
+import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 
 function LegalShell({
   icon,
@@ -14,8 +15,9 @@ function LegalShell({
   updated: string;
   children: React.ReactNode;
 }) {
+  const cfg = useSiteConfig();
   useEffect(() => {
-    document.title = `${title} - Starlr Forum`;
+    document.title = siteTitle(cfg, title);
   }, [title]);
 
   return (
