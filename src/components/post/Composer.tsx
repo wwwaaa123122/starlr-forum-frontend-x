@@ -39,6 +39,7 @@ export function Composer({
   const [categoryId, setCategoryId] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagDraft, setTagDraft] = useState('');
+  const tagInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -341,20 +342,35 @@ export function Composer({
                   }}
                 />
 
-                {/* 标签输入（xsm 屏隐藏，用 chips 编辑） */}
-                <button
-                  onClick={() => {
-                    const t = tagDraft.trim() || window.prompt('输入标签（最多 5 个）')?.trim();
-                    if (!t) return;
-                    if (t.length > 24) return toast.error('标签最多 24 字');
-                    if (tags.length >= TAGS_MAX) return toast.error('最多 5 个标签');
-                    if (!tags.includes(t)) setTags((ts) => [...ts, t]);
-                  }}
-                  aria-label="添加标签"
-                  className="btn-icon focus-ring h-9 w-9 text-brand hover:bg-brand-soft"
-                >
-                  <span className="text-base font-bold">#</span>
-                </button>
+                {/* 标签：内联输入，回车添加（替代 window.prompt） */}
+                <div className="flex h-9 items-center gap-1">
+                  <button
+                    onClick={() => tagInputRef.current?.focus()}
+                    aria-label="添加标签"
+                    className="btn-icon focus-ring h-9 w-9 text-brand hover:bg-brand-soft"
+                  >
+                    <span className="text-base font-bold">#</span>
+                  </button>
+                  <input
+                    ref={tagInputRef}
+                    value={tagDraft}
+                    onChange={(e) => setTagDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter') return;
+                      e.preventDefault();
+                      const t = tagDraft.trim().replace(/^#/, '');
+                      if (!t) return;
+                      if (t.length > 24) return toast.error('标签最多 24 字');
+                      if (tags.length >= TAGS_MAX) return toast.error('最多 5 个标签');
+                      if (!tags.includes(t)) setTags((ts) => [...ts, t]);
+                      setTagDraft('');
+                    }}
+                    placeholder="标签"
+                    maxLength={24}
+                    aria-label="标签输入，回车添加"
+                    className="h-8 w-24 rounded-full border border-line bg-surface px-2.5 text-[13px] outline-none focus:border-brand"
+                  />
+                </div>
               </>
             )}
           </div>
@@ -372,8 +388,7 @@ export function Composer({
           </div>
         </div>
 
-        {/* 标签草稿（隐藏 input 保留未来内联编辑） */}
-        <input value={tagDraft} onChange={(e) => setTagDraft(e.target.value)} className="hidden" aria-hidden />
+        {/* 标签草稿由上方内联输入接管 */}
       </div>
     </div>
   );
