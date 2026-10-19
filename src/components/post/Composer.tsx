@@ -303,6 +303,7 @@ export function Composer({
                             disabled={locked}
                             className={cn(locked && 'opacity-40')}
                             onClick={() => {
+                              close();
                               if (locked) return toast.error('该板块仅限版主及以上发布');
                               setCategoryId(c.slug);
                             }}
