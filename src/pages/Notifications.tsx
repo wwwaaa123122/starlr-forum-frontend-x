@@ -1,5 +1,5 @@
 /** 通知页：全部 / 未读 Tab，点击跳转并标记已读 */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -52,7 +52,7 @@ export default function Notifications() {
     document.title = siteTitle(cfg, '通知');
   }, []);
 
-  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['notifications'],
     queryFn: ({ pageParam }) => listNotifications(pageParam, 20),
     initialPageParam: 1,
@@ -78,9 +78,19 @@ export default function Notifications() {
     },
   });
 
+  const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (hasNextPage && items.length > 0 && items.length < 40) void fetchNextPage();
-  }, [hasNextPage, items.length, fetchNextPage]);
+    const el = sentinelRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) void fetchNextPage();
+      },
+      { rootMargin: '500px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const visible = filter === 'unread' ? items.filter((n) => !toBool(n.isRead)) : items;
 
@@ -141,6 +151,16 @@ export default function Notifications() {
         />
       ) : (
         visible.map((n) => <NotificationRow key={n.id} n={n} onOpen={() => openNotification(n)} />)
+      )}
+      <div ref={sentinelRef} className="h-4" />
+      {isFetchingNextPage && (
+        <div className="flex animate-pulse gap-3 border-b border-line px-4 py-4">
+          <div className="h-10 w-10 rounded-full bg-surface2" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 w-2/3 rounded bg-surface2" />
+            <div className="h-3 w-1/3 rounded bg-surface2" />
+          </div>
+        </div>
       )}
     </>
   );

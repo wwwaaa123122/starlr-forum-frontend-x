@@ -26,7 +26,7 @@ import {
   unlikePost,
 } from '@/lib/endpoints';
 import { useAuth } from '@/lib/auth';
-import { Avatar, Dropdown, MenuItem } from '@/components/ui/primitives';
+import { Avatar, Dropdown, MenuItem, Modal, Button } from '@/components/ui/primitives';
 import { cn, displayName, formatCount, relativeTime, stripMarkdown, tagsOf } from '@/lib/utils';
 import type { PostSummary } from '@/lib/types';
 
@@ -57,6 +57,7 @@ export const PostCard = memo(function PostCard({
   const [likeState, setLikeState] = useState({ liked, count: post.likeCount });
   const [favState, setFavState] = useState({ favorited, count: post.favoriteCount });
   const [deleted, setDeleted] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ['posts'] });
@@ -241,7 +242,7 @@ export const PostCard = memo(function PostCard({
                         icon={<Trash2 size={16} />}
                         onClick={() => {
                           close();
-                          if (confirm(`确定删除「${post.title}」吗？`)) deleteMut.mutate();
+                          setConfirmDelete(true);
                         }}
                       >
                         删除
@@ -351,6 +352,30 @@ export const PostCard = memo(function PostCard({
           </div>
         </div>
       </div>
+      <Modal
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        className="w-[92vw] max-w-md p-6"
+      >
+        <h3 className="text-lg font-extrabold">删除帖子</h3>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">删除后无法恢复，确定要删除「{post.title}」吗？</p>
+        <div className="mt-5 flex justify-end gap-2">
+          <Button variant="outline" pill onClick={() => setConfirmDelete(false)}>
+            取消
+          </Button>
+          <Button
+            pill
+            variant="danger"
+            disabled={deleteMut.isPending}
+            onClick={() => {
+              setConfirmDelete(false);
+              deleteMut.mutate();
+            }}
+          >
+            删除
+          </Button>
+        </div>
+      </Modal>
     </article>
   );
 });

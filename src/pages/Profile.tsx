@@ -185,7 +185,7 @@ export default function Profile() {
           @{profile.username}
           {profile.uid != null && <span className="ml-1 text-faint">· UID {profile.uid}</span>}
         </p>
-        {profile.bio && <p className="mt-2 whitespace-pre-wrap text-[15px] leading-relaxed">{profile.bio}</p>}
+        {profile.bio && <BioText bio={profile.bio} />}
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
           <span className="flex items-center gap-1.5">
             <CalendarDays size={15} /> {joinedMonth(profile.createdAt)} 加入
@@ -283,6 +283,31 @@ export default function Profile() {
           </>
         ))}
     </>
+  );
+}
+
+/** 简介纯文本渲染，URL 安全链接化（仅 http/https，React 自动转义防 XSS） */
+function BioText({ bio }: { bio: string }) {
+  const parts = bio.split(/(https?:\/\/[^\s<>"')\]]+)/g);
+  return (
+    <p className="mt-2 whitespace-pre-wrap break-words text-[15px] leading-relaxed">
+      {parts.map((part, i) =>
+        /^https?:\/\//.test(part) ? (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="text-brand hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {part}
+          </a>
+        ) : (
+          part
+        ),
+      )}
+    </p>
   );
 }
 

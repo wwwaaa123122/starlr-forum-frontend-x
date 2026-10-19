@@ -2,8 +2,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
-import { Skeleton } from '@/components/ui/primitives';
+import { Button, Skeleton } from '@/components/ui/primitives';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 interface SitePayload {
   site: {
@@ -114,35 +115,41 @@ export default function AdminSite() {
             <input className={field} value={site.site_footer ?? ''} maxLength={120}
               onChange={(e) => setSite({ ...site, site_footer: e.target.value })} />
           </label>
-          <button onClick={saveSite} disabled={saving || !site.site_name.trim()}
-            className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+          <Button onClick={saveSite} disabled={saving || !site.site_name.trim()}>
             {saving ? '保存中…' : '保存站点信息'}
-          </button>
+          </Button>
         </section>
 
         {setup && (
           <section className="rounded-xl border border-line p-4 space-y-3">
             <h2 className="text-sm font-bold">初始化选项</h2>
             <label className="flex items-center justify-between gap-4">
-              <span className="text-sm">开放注册</span>
-              <input type="checkbox" checked={setup.registration_enabled}
-                onChange={(e) => void saveSetup({ registration_enabled: e.target.checked })} />
-            </label>
-            <label className="flex items-center justify-between gap-4">
-              <span className="text-sm">
-                注册需要邮箱
-                <span className="block text-xs text-muted">关闭后用户仅用用户名+密码即可注册</span>
-              </span>
-              <input type="checkbox" checked={setup.registration_email_required}
-                onChange={(e) => void saveSetup({ registration_email_required: e.target.checked })} />
-            </label>
+            <span className="text-sm">开放注册</span>
+            <Switch
+              checked={setup.registration_enabled}
+              onChange={(v) => void saveSetup({ registration_enabled: v })}
+            />
+          </label>
+          <label className="flex items-center justify-between gap-4">
+            <span className="text-sm">
+              注册需要邮箱
+              <span className="block text-xs text-muted">关闭后用户仅用用户名+密码即可注册</span>
+            </span>
+            <Switch
+              checked={setup.registration_email_required}
+              onChange={(v) => void saveSetup({ registration_email_required: v })}
+            />
+          </label>
             <label className="flex items-center justify-between gap-4">
               <span className="text-sm">
                 图片上传到 S3
                 <span className="block text-xs text-muted">关闭时头像/图片走 R2 或 KV；开启需先在服务配置中填 S3 凭据</span>
               </span>
-              <select value={setup.uploads_storage}
-                onChange={(e) => void saveSetup({ uploads_storage: e.target.value as 'r2' | 's3' })}>
+              <select
+                className="rounded-lg border border-line bg-surface px-2 py-1.5 text-sm"
+                value={setup.uploads_storage}
+                onChange={(e) => void saveSetup({ uploads_storage: e.target.value as 'r2' | 's3' })}
+              >
                 <option value="r2">R2 / KV</option>
                 <option value="s3">S3</option>
               </select>
@@ -151,5 +158,25 @@ export default function AdminSite() {
         )}
       </div>
     </>
+  );
+}
+
+/** 与设置页一致的开关样式 */
+function Switch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={cn('relative h-7 w-12 shrink-0 rounded-full transition-colors', checked ? 'bg-brand' : 'bg-line-strong')}
+    >
+      <span
+        className={cn(
+          'absolute top-0.5 size-6 rounded-full bg-white shadow transition-all',
+          checked ? 'left-[22px]' : 'left-0.5',
+        )}
+      />
+    </button>
   );
 }

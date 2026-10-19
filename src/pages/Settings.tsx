@@ -35,7 +35,7 @@ import {
 import { GithubIcon } from '@/components/GithubIcon';
 import type { MeUser } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
-import { Avatar, Button, Input, Spinner, Textarea } from '@/components/ui/primitives';
+import { Avatar, Button, Input, Modal, Spinner, Textarea } from '@/components/ui/primitives';
 import { assetUrl } from '@/lib/base-url';
 import { cn, displayName, relativeTime } from '@/lib/utils';
 import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
@@ -52,6 +52,7 @@ export default function Settings() {
   const [initialized, setInitialized] = useState(false);
   /** 待裁剪的图片（头像 / 背景图） */
   const [cropTarget, setCropTarget] = useState<{ file: File; kind: 'avatar' | 'background' } | null>(null);
+  const [revokeOpen, setRevokeOpen] = useState(false);
 
   useEffect(() => {
     document.title = siteTitle(cfg, '设置');
@@ -357,8 +358,25 @@ export default function Settings() {
             variant="outline"
             pill
             className="justify-start text-danger"
+            onClick={() => setRevokeOpen(true)}
+          >
+            <Trash2 size={15} /> 下线所有其他设备
+          </Button>
+        </div>
+      </section>
+
+      <Modal open={revokeOpen} onClose={() => setRevokeOpen(false)} className="w-[92vw] max-w-md p-6">
+        <h3 className="text-lg font-extrabold">下线所有其他设备</h3>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">其他设备上的登录状态将全部退出，确定继续吗？</p>
+        <div className="mt-5 flex justify-end gap-2">
+          <Button variant="outline" pill onClick={() => setRevokeOpen(false)}>
+            取消
+          </Button>
+          <Button
+            pill
+            variant="danger"
             onClick={async () => {
-              if (!confirm('退出所有其他设备的登录状态？')) return;
+              setRevokeOpen(false);
               try {
                 await revokeOthers();
                 toast.success('其他设备已全部下线');
@@ -367,10 +385,10 @@ export default function Settings() {
               }
             }}
           >
-            <Trash2 size={15} /> 下线所有其他设备
+            下线
           </Button>
         </div>
-      </section>
+      </Modal>
     </>
   );
 }

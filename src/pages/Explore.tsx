@@ -14,11 +14,23 @@ import { useSiteConfig, siteTitle } from '@/lib/useSiteConfig';
 export default function Explore() {
   const cfg = useSiteConfig();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [tab, setTab] = useState<'post' | 'user'>('post');
+  const tab = (searchParams.get('type') === 'user' ? 'user' : 'post') as 'post' | 'user';
   const [input, setInput] = useState(searchParams.get('q') ?? '');
   const category = searchParams.get('category') ?? undefined;
   const tag = searchParams.get('tag') ?? undefined;
   const q = searchParams.get('q') ?? '';
+
+  /* 输入框跟随 URL（从标签/分类链接进入时同步 q） */
+  useEffect(() => {
+    setInput(q);
+  }, [q]);
+
+  const setTab = (v: 'post' | 'user') => {
+    const next = new URLSearchParams(searchParams);
+    if (v === 'user') next.set('type', 'user');
+    else next.delete('type');
+    setSearchParams(next, { replace: true });
+  };
 
   useEffect(() => {
     document.title = siteTitle(cfg, '探索');
@@ -96,9 +108,9 @@ export default function Explore() {
                 type="button"
                 onClick={() => { setInput(''); submit(''); }}
                 aria-label="清空"
-                className="btn-icon absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 bg-brand text-white"
+                className="btn-icon absolute right-1.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-brand text-white"
               >
-                <X size={13} />
+                <X size={16} />
               </button>
             )}
           </div>
@@ -166,7 +178,7 @@ export default function Explore() {
             <EmptyState
               icon={<Search size={44} strokeWidth={1.2} />}
               title="没有找到相关帖子"
-              description={`换个关键词试试，比如「${q || '星尘'}」`}
+              description="换个关键词试试，或浏览热门标签与板块"
             />
           ) : (
             <>

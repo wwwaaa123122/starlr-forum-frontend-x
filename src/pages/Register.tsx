@@ -104,22 +104,22 @@ export default function Register() {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1.5 block text-[13px] font-semibold text-muted">用户名 *</span>
-                <Input value={form.username} onChange={set('username')} placeholder="用户名" required minLength={3} maxLength={24} />
+                <Input value={form.username} onChange={set('username')} placeholder="用户名" required minLength={3} maxLength={24} pattern="[\p{L}\p{N}_\-]+" title="用户名只能包含中文、字母、数字、下划线和短横线" />
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-[13px] font-semibold text-muted">昵称</span>
                 <Input value={form.nickname} onChange={set('nickname')} placeholder="选填" maxLength={24} />
               </label>
             </div>
-            <label className="block">
-              <span className="mb-1.5 block text-[13px] font-semibold text-muted">邮箱 *</span>
-              <div className="relative">
-                <AtSign size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" />
-                {emailRequired && (
+            {emailRequired && (
+              <label className="block">
+                <span className="mb-1.5 block text-[13px] font-semibold text-muted">邮箱 *</span>
+                <span className="relative block">
+                  <AtSign size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" />
                   <Input type="email" value={form.email} onChange={set('email')} placeholder="邮箱" required className="pl-10" />
-                )}
-              </div>
-            </label>
+                </span>
+              </label>
+            )}
             <label className="block">
               <span className="mb-1.5 block text-[13px] font-semibold text-muted">密码 *</span>
               <Input type="password" value={form.password} onChange={set('password')} placeholder="8 位以上" required minLength={8} maxLength={128} />

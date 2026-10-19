@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { KeyRound, Loader2, PlugZap, RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button, Input, Skeleton } from '@/components/ui/primitives';
-import { adminErrMsg, Field, Tag } from './shared';
+import { ConfirmModal, adminErrMsg, Field, Tag } from './shared';
 import { api } from '@/lib/api';
 import type { MeUser } from '@/lib/types';
 import { useAuth } from '@/lib/auth';
@@ -76,6 +76,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [testOut, setTestOut] = useState<{ ok: boolean; message: string } | null>(null);
   const [mailTo, setMailTo] = useState('');
+  const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => setDraft({}), [svc.key]);
 
@@ -155,7 +156,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
                     {isEnv && <span className="ml-1.5 rounded bg-surface2 px-1.5 py-0.5 text-faint">环境变量兜底（只读）</span>}
                   </span>
                   {!isEnv && (
-                    <button type="button" className="text-xs text-red-500 hover:underline" onClick={() => setMailRows((rows) => rows.filter((_, j) => j !== i))}>
+                    <button type="button" className="text-xs text-danger hover:underline" onClick={() => setMailRows((rows) => rows.filter((_, j) => j !== i))}>
                       删除
                     </button>
                   )}
@@ -236,7 +237,13 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
           </Button>
         )}
         {svc.configured && svc.key !== 'oauth-github' && svc.key !== 'mail' && (
-          <Button size="sm" variant="ghost" className="text-red-500" disabled={resetMut.isPending} onClick={() => { if (confirm(`清空「${svc.label}」的后台配置？将回退到环境变量。`)) resetMut.mutate(); }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-danger"
+            disabled={resetMut.isPending}
+            onClick={() => setResetOpen(true)}
+          >
             <Trash2 size={13} /> 清空
           </Button>
         )}
@@ -251,11 +258,24 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
       )}
 
       {testOut && (
-        <p className={`mt-3 rounded-xl border p-2.5 text-[13px] ${testOut.ok ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+        <p className={`mt-3 rounded-xl border p-2.5 text-[13px] ${testOut.ok ? 'border-boost/30 bg-boost/10 text-boost' : 'border-danger/30 bg-danger/10 text-danger'}`}>
           {testOut.ok ? '✓ ' : '✕ '}
           {testOut.message}
         </p>
       )}
+
+      <ConfirmModal
+        open={resetOpen}
+        onClose={() => setResetOpen(false)}
+        onConfirm={() => {
+          setResetOpen(false);
+          resetMut.mutate();
+        }}
+        title={`清空「${svc.label}」的后台配置？`}
+        description="将回退到环境变量配置。"
+        confirmText="清空"
+        danger
+      />
     </section>
   );
 }

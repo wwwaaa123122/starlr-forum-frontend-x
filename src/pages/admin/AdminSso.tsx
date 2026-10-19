@@ -112,7 +112,7 @@ export default function AdminSso() {
           </div>
         </div>
 
-        {error && <div className="mt-2 text-xs text-red-400">{error}</div>}
+        {error && <div className="mt-2 text-xs text-danger">{error}</div>}
 
         <div className="mt-3">
           <Button size="sm" disabled={save.isPending} onClick={() => save.mutate()}>

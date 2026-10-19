@@ -152,6 +152,8 @@ export default function PostDetail() {
     },
     onError: (e: Error) => toast.error(e.message || '保存失败，请重试'),
   });
+  const editTitleLen = editTitle.trim().length;
+  const editValid = editTitleLen >= 2 && editTitleLen <= 120 && editContent.trim().length > 0;
 
   useEffect(() => {
     applySeo({
@@ -382,9 +384,9 @@ export default function PostDetail() {
             <h2 className="text-[16px] font-bold">编辑帖子</h2>
             <Input
               value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
+              onChange={(e) => setEditTitle(e.target.value.slice(0, 120))}
               placeholder="标题"
-              maxLength={100}
+              maxLength={120}
             />
             <Textarea
               value={editContent}
@@ -396,7 +398,7 @@ export default function PostDetail() {
               <Button variant="ghost" pill onClick={() => setEditing(false)}>
                 取消
               </Button>
-              <Button pill disabled={!editTitle.trim() || !editContent.trim() || editMut.isPending} onClick={() => editMut.mutate()}>
+              <Button pill disabled={!editValid || editMut.isPending} onClick={() => editMut.mutate()}>
                 {editMut.isPending ? <Loader2 size={15} className="animate-spin" /> : null} 保存
               </Button>
             </div>

@@ -140,7 +140,7 @@ export default function Login() {
             <Link to="/register" className="font-semibold text-brand hover:underline">
               注册新账号
             </Link>
-            <button type="button" onClick={() => setForgotOpen((v) => !v)} className="text-muted hover:text-ink">
+            <button type="button" aria-expanded={forgotOpen} onClick={() => setForgotOpen((v) => !v)} className="text-muted hover:text-ink">
               忘记密码？
             </button>
           </div>

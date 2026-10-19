@@ -8,7 +8,7 @@ import { deleteReply, likeReply, unlikeReply, updateReply } from '@/lib/endpoint
 import { useAuth } from '@/lib/auth';
 import { ActionButton } from './PostCard';
 import { RoleBadge } from '@/components/post/RoleBadge';
-import { Avatar, Button, Dropdown, MenuItem, Textarea } from '@/components/ui/primitives';
+import { Avatar, Button, Dropdown, Modal, MenuItem, Textarea } from '@/components/ui/primitives';
 import { RichText } from '@/lib/markdown';
 import { cn, displayName, relativeTime } from '@/lib/utils';
 import type { Reply } from '@/lib/types';
@@ -37,6 +37,7 @@ export function ReplyCard({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(reply.content);
   const [removed, setRemoved] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const isAuthor = user?.id === reply.authorId;
   const canModerate = user?.role === 'admin' || user?.role === 'moderator';
@@ -141,7 +142,7 @@ export function ReplyCard({
                         icon={<Trash2 size={15} />}
                         onClick={() => {
                           close();
-                          if (confirm('确定删除这条回复吗？')) deleteMut.mutate();
+                          setConfirmDelete(true);
                         }}
                       >
                         删除
@@ -188,7 +189,7 @@ export function ReplyCard({
                           icon={<Trash2 size={15} />}
                           onClick={() => {
                             close();
-                            if (confirm('确定删除这条回复吗？')) deleteMut.mutate();
+                            setConfirmDelete(true);
                           }}
                         >
                           删除
@@ -270,6 +271,30 @@ export function ReplyCard({
           </div>
         </div>
       </div>
+      <Modal
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        className="w-[92vw] max-w-md p-6"
+      >
+        <h3 className="text-lg font-extrabold">删除回复</h3>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">删除后无法恢复，确定要删除这条回复吗？</p>
+        <div className="mt-5 flex justify-end gap-2">
+          <Button variant="outline" pill onClick={() => setConfirmDelete(false)}>
+            取消
+          </Button>
+          <Button
+            pill
+            variant="danger"
+            disabled={deleteMut.isPending}
+            onClick={() => {
+              setConfirmDelete(false);
+              deleteMut.mutate();
+            }}
+          >
+            删除
+          </Button>
+        </div>
+      </Modal>
     </article>
   );
 }

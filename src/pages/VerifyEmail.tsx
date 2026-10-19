@@ -45,7 +45,7 @@ export function VerifyEmailPage() {
       <div className="rounded-2xl border border-line bg-surface2 p-8 text-center">
         <div className="mb-2 flex justify-center">
           {state === 'ok' ? (
-            <CheckCircle2 className="size-12 text-emerald-500" />
+            <CheckCircle2 className="size-12 text-boost" />
           ) : state === 'loading' ? (
             <Spinner className="size-10" />
           ) : (
@@ -107,7 +107,7 @@ export function UnverifiedBanner() {
   };
 
   return (
-    <div className="border-b border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400">
+    <div className="border-b border-line bg-brand-soft text-brand">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2 text-sm">
         <span>
           <strong>邮箱未验证</strong>：你可以浏览内容，但发帖、回复与上传需要先激活账号。
