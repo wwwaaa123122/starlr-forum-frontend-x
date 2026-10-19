@@ -1,8 +1,8 @@
 /** 帖子详情：正文 Markdown + 操作条 + 楼中楼回复 */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import { CornerDownRight, Bookmark, Eye, Loader2, Star } from 'lucide-react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { CornerDownRight, Bookmark, Eye, Loader2, Pencil, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   favoritePost,
@@ -12,6 +12,7 @@ import {
   markView,
   unfavoritePost,
   unlikePost,
+  updatePost,
 } from '@/lib/endpoints';
 import { ColumnHeader } from '@/components/layout/ColumnHeader';
 import { useAuth } from '@/lib/auth';
@@ -21,7 +22,7 @@ import { Composer } from '@/components/post/Composer';
 import { ReplyCard } from '@/components/post/ReplyCard';
 import { PostSkeleton } from '@/components/post/PostSkeleton';
 import { RoleBadge } from '@/components/post/RoleBadge';
-import { Avatar, Button, EmptyState, Skeleton } from '@/components/ui/primitives';
+import { Avatar, Button, EmptyState, Input, Modal, Skeleton, Textarea } from '@/components/ui/primitives';
 import { RichText } from '@/lib/markdown';
 import { displayName, formatCount, fullTime, tagsOf } from '@/lib/utils';
 import type { Reply } from '@/lib/types';
@@ -74,6 +75,19 @@ export default function PostDetail() {
 
   const post = data?.post;
 
+  /* 从列表卡片菜单「编辑」跳转过来：详情加载完成后自动打开编辑框 */
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [autoEditHandled, setAutoEditHandled] = useState(false);
+  useEffect(() => {
+    if (searchParams.get('edit') === '1' && post && !autoEditHandled) {
+      setEditTitle(post.title);
+      setEditContent(post.content);
+      setEditing(true);
+      setAutoEditHandled(true);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, post, autoEditHandled, setSearchParams]);
+
   /* 详情页互动（乐观更新 + 回写缓存） */
   const [likeState, setLikeState] = useState<{ liked: boolean; count: number } | null>(null);
   const [favState, setFavState] = useState<{ favorited: boolean; count: number } | null>(null);
@@ -118,6 +132,25 @@ export default function PostDetail() {
             : s,
       ),
     onError: () => toast.error('操作失败，请重试'),
+  });
+
+  /* 编辑帖子（作者或版主） */
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const openEdit = () => {
+    setEditTitle(post?.title ?? '');
+    setEditContent(post?.content ?? '');
+    setEditing(true);
+  };
+  const editMut = useMutation({
+    mutationFn: () => updatePost(post!.id, { title: editTitle.trim(), content: editContent.trim() }),
+    onSuccess: async () => {
+      setEditing(false);
+      toast.success('帖子已更新');
+      await queryClient.invalidateQueries({ queryKey: ['post', id] });
+    },
+    onError: (e: Error) => toast.error(e.message || '保存失败，请重试'),
   });
 
   useEffect(() => {
@@ -236,6 +269,15 @@ export default function PostDetail() {
           <span className="flex items-center gap-1 text-sm">
             <Eye size={14} /> {formatCount(post.viewCount)}
           </span>
+          {(post.isAuthor || post.canModerate) && (
+            <button
+              onClick={openEdit}
+              className="flex items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
+              aria-label="编辑帖子"
+            >
+              <Pencil size={13} /> 编辑
+            </button>
+          )}
         </div>
 
         <RichText content={post.content} className="mt-3 text-[16px]" />
@@ -328,6 +370,38 @@ export default function PostDetail() {
             {isFetchingNextPage ? <Loader2 size={15} className="animate-spin" /> : null} 加载更多回复
           </Button>
         </div>
+      )}
+
+      {/* 编辑帖子对话框 */}
+      {editing && (
+        <Modal
+          open
+          onClose={() => setEditing(false)}
+        >
+          <div className="space-y-3">
+            <h2 className="text-[16px] font-bold">编辑帖子</h2>
+            <Input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder="标题"
+              maxLength={100}
+            />
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              rows={10}
+              placeholder="正文（支持 Markdown）"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" pill onClick={() => setEditing(false)}>
+                取消
+              </Button>
+              <Button pill disabled={!editTitle.trim() || !editContent.trim() || editMut.isPending} onClick={() => editMut.mutate()}>
+                {editMut.isPending ? <Loader2 size={15} className="animate-spin" /> : null} 保存
+              </Button>
+            </div>
+          </div>
+        </Modal>
       )}
     </>
   );

@@ -8,6 +8,7 @@ import {
   Flag,
   MessageCircle,
   MoreHorizontal,
+  Pencil,
   Pin,
   Repeat2,
   Share2,
@@ -221,6 +222,17 @@ export const PostCard = memo(function PostCard({
                         }}
                       >
                         举报
+                      </MenuItem>
+                    )}
+                    {(isAuthor || canModerate) && (
+                      <MenuItem
+                        icon={<Pencil size={16} />}
+                        onClick={() => {
+                          close();
+                          navigate(`/post/${post.id}?edit=1`);
+                        }}
+                      >
+                        编辑
                       </MenuItem>
                     )}
                     {(isAuthor || canModerate) && (
