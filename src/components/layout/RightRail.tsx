@@ -8,12 +8,12 @@ import { formatCount , displayName } from '@/lib/utils';
 import { Avatar, Skeleton } from '@/components/ui/primitives';
 import { useSiteConfig } from '@/lib/useSiteConfig';
 
-/** 右栏页脚（非首页页面也单独渲染） */
-export function RailFooter() {
+/** 全宽页脚（非首页，横向排在页面最底部） */
+export function PageFooter() {
   const cfg = useSiteConfig();
   return (
-    <footer className="hidden px-4 py-4 text-[13px] leading-5 text-faint lg:block">
-      <div className="flex flex-wrap gap-x-3 gap-y-1">
+    <footer className="border-t border-line px-6 py-5 text-center text-[13px] leading-5 text-faint">
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
         <Link to="/terms" className="hover:underline">用户协议</Link>
         <Link to="/privacy" className="hover:underline">隐私政策</Link>
         <Link to="/privacy" className="hover:underline">Cookie</Link>
