@@ -35,9 +35,9 @@ export default function AdminOverview() {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {items.map(({ label, value, icon: Icon }) => (
-          <div key={label} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4">
+          <div key={label} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-5">
             <div className="rounded-xl bg-brand-soft p-2 text-brand">
               <Icon className="size-4" />
             </div>

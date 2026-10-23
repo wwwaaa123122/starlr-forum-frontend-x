@@ -81,7 +81,7 @@ export default function AdminLayout() {
           </span>
         }
         tabs={
-          <nav className="flex overflow-x-auto" role="tablist">
+          <nav className="flex flex-wrap px-3 py-2" role="tablist">
           {items.map((s) => (
             <NavLink
               key={s.to}
@@ -90,25 +90,20 @@ export default function AdminLayout() {
               role="tab"
               className={({ isActive }) =>
                 cn(
-                  'relative whitespace-nowrap px-4 py-3.5 text-[15px] transition hover:bg-surface2',
-                  isActive ? 'font-bold text-ink' : 'text-muted',
+                  'rounded-full px-3.5 py-1.5 text-[14px] transition',
+                  isActive
+                    ? 'bg-brand-soft font-bold text-brand'
+                    : 'text-muted hover:bg-surface2 hover:text-ink',
                 )
               }
             >
-              {({ isActive }) => (
-                <>
-                  {s.label}
-                  {isActive && (
-                    <span className="anim-tab absolute inset-x-3 bottom-0 h-1 rounded-full bg-brand" aria-hidden />
-                  )}
-                </>
-              )}
+              {s.label}
             </NavLink>
           ))}
         </nav>
         }
       />
-      <div className="p-4 pb-24 sm:p-5 md:pb-8">
+      <div className="p-5 pb-24 sm:p-7 md:pb-10">
         <Outlet />
       </div>
     </>
