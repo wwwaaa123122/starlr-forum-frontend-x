@@ -11,6 +11,7 @@ import {
   type ReactNode,
   type TextareaHTMLAttributes,
 } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { assetUrl } from '@/lib/base-url';
@@ -290,7 +291,9 @@ export function Modal({
   }, [open, onClose]);
 
   if (!mounted) return null;
-  return (
+  // Portal 到 body：祖先有 transform（如 .anim-page 动画的 fill-mode 保留 identity matrix）
+  // 会让 fixed 退化为相对该祖先定位，弹窗随页面滚出视口——挂 body 根治。
+  return createPortal(
     <div
       className={cn(
         'fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:items-center',
@@ -308,7 +311,8 @@ export function Modal({
         {children}
       </div>
       {closeOnBackdrop && <div className="absolute inset-0 -z-10" onClick={onClose} aria-hidden />}
-    </div>
+    </div>,
+    document.body,
   );
 }
 
