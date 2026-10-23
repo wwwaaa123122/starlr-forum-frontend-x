@@ -294,7 +294,7 @@ export function Composer({
                     </button>
                   )}
                 >
-                  {() => (
+                  {(close) => (
                     <div className="max-h-72 overflow-y-auto">
                       {categories.map((c) => {
                         const locked = c.postPolicy === 'staff' && (!user || user.role === 'user');
