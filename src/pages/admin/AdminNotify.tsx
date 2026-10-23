@@ -70,7 +70,7 @@ export default function AdminNotify() {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted">发送频率限制：每小时 10 次</span>
+        <span className="text-xs text-muted">系统通知无发送频率限制；群发按目标用户数即时入库</span>
         <Button pill onClick={() => void send()} disabled={sending || !title.trim()}>
           <Send className="size-4" /> {sending ? '发送中…' : '发送通知'}
         </Button>
