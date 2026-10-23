@@ -76,6 +76,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [testOut, setTestOut] = useState<{ ok: boolean; message: string } | null>(null);
   const [mailTo, setMailTo] = useState('');
+  const [mailAccount, setMailAccount] = useState('');
   const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => setDraft({}), [svc.key]);
@@ -103,7 +104,10 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
   const testMut = useMutation({
     mutationFn: () => api<{ ok: boolean; message: string }>(`/api/admin/services/${svc.key}/test`, {
       method: 'POST',
-      body: svc.key === 'mail' ? { to: mailTo } : {},
+      body:
+        svc.key === 'mail'
+          ? { to: mailTo, ...(mailAccount.trim() ? { account: Number(mailAccount) } : {}) }
+          : {},
     }),
     onSuccess: (res) => setTestOut(res),
     onError: (e) => setTestOut({ ok: false, message: adminErrMsg(e) }),
@@ -253,6 +257,14 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
         <div className="mt-3">
           <Field label="测试收件邮箱">
             <Input value={mailTo} onChange={(e) => setMailTo(e.target.value)} placeholder="接收测试邮件的邮箱" type="email" />
+          </Field>
+          <Field label="测试发件账号（可选）">
+            <Input
+              value={mailAccount}
+              onChange={(e) => setMailAccount(e.target.value.replace(/\D/g, ''))}
+              placeholder={`留空 = 按轮询自动选择（当前共 ${(svc.accounts ?? []).length} 个账号，填 1-${(svc.accounts ?? []).length} 指定）`}
+              inputMode="numeric"
+            />
           </Field>
         </div>
       )}

@@ -79,6 +79,7 @@ function ScrollManager() {
   const { pathname } = useLocation();
   const navType = useNavigationType();
   const firstRender = useRef(true);
+  const previousPath = useRef('');
 
   // 持续记录当前页滚动位置（离开前保留现场）
   useEffect(() => {
@@ -88,11 +89,15 @@ function ScrollManager() {
   }, [pathname]);
 
   // 首次加载不干预（交给浏览器原生滚动恢复）；之后布局提交前恢复，避免闪跳
+  // 管理后台内部切分区（/admin/*）保持当前滚动位置，不回顶
   useLayoutEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
+    const prev = previousPath.current;
+    previousPath.current = pathname;
+    if (pathname.startsWith('/admin') && prev.startsWith('/admin')) return;
     const saved = navType === 'POP' ? scrollMemory.get(pathname) : undefined;
     window.scrollTo(0, saved ?? 0);
   }, [pathname, navType]);
