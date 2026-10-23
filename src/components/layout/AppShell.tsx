@@ -1,7 +1,8 @@
 /** AppShell：三栏布局 + 抽屉状态 Context（中栏左上角头像/菜单按钮触发） */
 import { createContext, useContext, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import { LeftSidebar } from './LeftSidebar';
-import { RightRail } from './RightRail';
+import { RightRail, RailFooter } from './RightRail';
 import { MobileTabBar } from './MobileTabBar';
 import { MobileDrawer } from './MobileDrawer';
 
@@ -18,6 +19,8 @@ export function useMobileDrawer(): MobileDrawerContextValue {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   return (
     <MobileDrawerContext.Provider value={{ openDrawer: () => setDrawerOpen(true) }}>
@@ -31,8 +34,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {children}
           </main>
 
-          {/* 右栏：≥1024 显示 */}
-          <RightRail />
+          {/* 右栏：仅首页（≥1024）显示完整右栏；其它页面渲染页脚 */}
+          {isHome ? <RightRail /> : <RailFooter />}
         </div>
 
         {/* 移动端：<768 底部标签栏 + 悬浮发帖钮；抽屉由中栏左上角触发 */}

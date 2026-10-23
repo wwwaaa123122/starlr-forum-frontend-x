@@ -1,12 +1,28 @@
-/** 右栏（≥1024）：搜索框、热门标签「正在闪耀」、板块分类、页脚 */
+/** 右栏（≥1024，仅首页）：搜索框、热门板块、页脚；RailFooter 供其它页面单独渲染页脚 */
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Hash, Sparkles } from 'lucide-react';
-import { hotTags, listCategories, searchUsers } from '@/lib/endpoints';
+import { Search, Hash, Flame } from 'lucide-react';
+import { hotPosts, listCategories, searchUsers } from '@/lib/endpoints';
 import { formatCount , displayName } from '@/lib/utils';
 import { Avatar, Skeleton } from '@/components/ui/primitives';
 import { useSiteConfig } from '@/lib/useSiteConfig';
+
+/** 右栏页脚（非首页页面也单独渲染） */
+export function RailFooter() {
+  const cfg = useSiteConfig();
+  return (
+    <footer className="hidden px-4 py-4 text-[13px] leading-5 text-faint lg:block">
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        <Link to="/terms" className="hover:underline">用户协议</Link>
+        <Link to="/privacy" className="hover:underline">隐私政策</Link>
+        <Link to="/privacy" className="hover:underline">Cookie</Link>
+        <a href="https://github.com/wwwaaa123122" target="_blank" rel="noreferrer" className="hover:underline">GitHub</a>
+      </div>
+      <div className="mt-1">© 2025-2026 {cfg?.siteName ?? 'Forum'} · GPL-3.0 开源协议</div>
+    </footer>
+  );
+}
 
 export function RightRail({ hidden }: { hidden?: boolean }) {
   const cfg = useSiteConfig();
@@ -14,22 +30,28 @@ export function RightRail({ hidden }: { hidden?: boolean }) {
   return (
     <aside className="sticky top-0 hidden h-dvh w-[350px] shrink-0 flex-col gap-4 overflow-y-auto px-5 py-2 pb-8 lg:flex">
       <SearchBox />
-      <TrendsCard />
+      <HotPostsCard />
       <CategoriesCard />
-      <footer className="px-3 text-[13px] leading-5 text-faint">
-        <div className="flex flex-wrap gap-x-3 gap-y-1">
-          <Link to="/terms" className="hover:underline">用户协议</Link>
-          <Link to="/privacy" className="hover:underline">隐私政策</Link>
-          <Link to="/privacy" className="hover:underline">Cookie</Link>
-        </div>
-        <div className="mt-1">© 2025-2026 {cfg?.siteName ?? 'Forum'} · GPL-3.0</div>
-        <div className="mt-0.5">
-          <a href="/license" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">开源协议</a>
-          <span className="mx-1 text-xs text-muted">·</span>
-          <a href="https://github.com/wwwaaa123122" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">GitHub</a>
-        </div>
-      </footer>
+      <Footer />
     </aside>
+  );
+}
+
+/** 页脚（首页右栏内） */
+function Footer() {
+  const cfg = useSiteConfig();
+  return (
+    <footer className="px-3 text-[13px] leading-5 text-faint">
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        <Link to="/terms" className="hover:underline">用户协议</Link>
+        <Link to="/privacy" className="hover:underline">隐私政策</Link>
+        <Link to="/privacy" className="hover:underline">Cookie</Link>
+      </div>
+      <div>© 2025-2026 {cfg?.siteName ?? 'Forum'} · GPL-3.0</div>
+      <div className="mt-0.5">
+        <a href="https://github.com/wwwaaa123122" target="_blank" rel="noreferrer" className="text-xs text-muted hover:underline">GitHub</a>
+      </div>
+    </footer>
   );
 }
 
@@ -62,14 +84,17 @@ export function SearchBox() {
   );
 }
 
-/** 热门标签卡（后端 /api/posts/tags） */
-function TrendsCard() {
-  const { data, isLoading } = useQuery({ queryKey: ['hot-tags'], queryFn: hotTags });
+/** 热门帖卡（后端 /api/posts?sort=hot，热度 = 点赞×3 + 回复×2 + 浏览/10，按活跃度加权衰减） */
+function HotPostsCard() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['hot-posts-rail'],
+    queryFn: () => hotPosts({ page: 1, pageSize: 6 }),
+  });
   return (
     <section className="overflow-hidden rounded-2xl border border-line bg-surface">
       <h2 className="flex items-center gap-2 px-4 pb-2 pt-3 text-lg font-extrabold">
-        <Sparkles size={17} className="text-star" />
-        正在闪耀
+        <Flame size={17} className="text-star" />
+        热门
       </h2>
       {isLoading ? (
         <div className="space-y-3 px-4 pb-4">
@@ -79,27 +104,26 @@ function TrendsCard() {
         </div>
       ) : (
         <div>
-          {(data?.tags ?? []).slice(0, 6).map((tag) => (
+          {(data?.posts ?? []).slice(0, 6).map((p) => (
             <Link
-              key={tag.name}
-              to={`/explore?tag=${encodeURIComponent(tag.name)}`}
+              key={p.id}
+              to={`/post/${p.id}`}
               className="block px-4 py-2.5 transition hover:bg-surface2"
             >
-              <div className="text-[13px] text-faint">标签</div>
-              <div className="flex items-center justify-between">
-                <span className="text-[15px] font-bold text-ink">#{tag.name}</span>
-                <span className="text-[13px] text-muted">{formatCount(tag.count)} 帖</span>
+              <div className="truncate text-[15px] font-bold text-ink">{p.title}</div>
+              <div className="text-[13px] text-muted">
+                {displayName(p.authorNickname || p.authorName)} · {formatCount(p.likeCount)} 赞 · {formatCount(p.replyCount)} 回复
               </div>
             </Link>
           ))}
-          {(!data || data.tags.length === 0) && (
-            <p className="px-4 pb-4 text-sm text-muted">还没有标签被点亮</p>
+          {(!data || data.posts.length === 0) && (
+            <p className="px-4 pb-4 text-sm text-muted">暂无热门帖子</p>
           )}
           <Link
-            to="/explore"
+            to="/explore?sort=hot"
             className="block px-4 py-3 text-[15px] text-brand transition hover:brightness-110"
           >
-            探索更多
+            查看更多
           </Link>
         </div>
       )}

@@ -133,6 +133,7 @@ export interface PostListQuery {
 }
 
 export const listPosts = (query: PostListQuery = {}) => {
+
   const params = new URLSearchParams();
   if (query.category) params.set('category', query.category);
   if (query.tag) params.set('tag', query.tag);
@@ -142,6 +143,8 @@ export const listPosts = (query: PostListQuery = {}) => {
   params.set('pageSize', String(query.pageSize ?? 20));
   return api<{ posts: PostSummary[]; pagination: Pagination }>(`/api/posts?${params}`);
 };
+
+export const hotPosts = (query: PostListQuery = {}) => listPosts({ ...query, sort: 'hot' });
 
 export const hotTags = () => api<{ tags: TagItem[] }>('/api/posts/tags');
 

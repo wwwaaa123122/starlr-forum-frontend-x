@@ -50,7 +50,7 @@ export function LeftSidebar() {
   const isDark = useTheme() === 'dark';
 
   return (
-    <aside className="sticky top-0 hidden h-dvh shrink-0 flex-col justify-between px-1 py-2 md:flex md:w-[88px] xl:w-[275px]">
+    <aside className="sticky top-0 hidden h-dvh shrink-0 flex-col justify-between py-2 pl-0 pr-1 md:flex md:w-[64px] xl:w-[235px]">
       <div className="flex flex-col items-center xl:items-start">
         {/* Logo */}
         <Link
