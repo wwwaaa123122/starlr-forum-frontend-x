@@ -30,6 +30,63 @@ const EVENT_LABEL: Record<string, string> = {
   cron: '定时校验',
 };
 
+/** HTTP 状态码含义速查 */
+const HTTP_HINT: Record<number, string> = {
+  200: '已收录（URL 此前已提交过）',
+  202: '已受理，等待抓取',
+  400: '请求格式无效',
+  403: 'key 无效或域名未验证',
+  422: 'URL 与 key 的域名不匹配',
+  429: '请求过于频繁被限流',
+};
+
+/** 状态徽章：失败（或有关注信息）时点击弹出完整详情 Popover */
+function StatusBadge({ status, httpCode, message, attempts }: {
+  status: 'ok' | 'failed';
+  httpCode: number | null;
+  message: string | null;
+  attempts: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const hasDetail = Boolean(message || httpCode);
+  const badge = (
+    <span
+      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+        status === 'ok' ? 'bg-boost/10 text-boost' : 'bg-danger/10 text-danger'
+      } ${hasDetail ? 'cursor-pointer' : ''}`}
+      onClick={hasDetail ? () => setOpen((v) => !v) : undefined}
+    >
+      {status === 'ok' ? '成功' : '失败'}
+    </span>
+  );
+  if (!hasDetail) return badge;
+  return (
+    <span className="relative inline-block">
+      {badge}
+      {open && (
+        <>
+          {/* 点击外部关闭 */}
+          <span className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <span className="absolute left-0 top-6 z-50 block w-64 rounded-xl border border-line bg-surface p-3 text-left shadow-lg">
+            <span className="block text-[11px] font-bold text-ink">推送详情</span>
+            {httpCode !== null && (
+              <span className="mt-1 block text-[11px] text-muted">
+                HTTP {httpCode}{HTTP_HINT[httpCode] ? `：${HTTP_HINT[httpCode]}` : ''}
+              </span>
+            )}
+            {attempts > 1 && (
+              <span className="block text-[11px] text-muted">尝试 {attempts} 次后失败</span>
+            )}
+            {message && (
+              <span className="mt-1 block break-all text-[11px] leading-relaxed text-muted">{message}</span>
+            )}
+          </span>
+        </>
+      )}
+    </span>
+  );
+}
+
 export default function AdminSeoPushes() {
   const qc = useQueryClient();
   const [channel, setChannel] = useState<'' | 'baidu' | 'indexnow'>('');
@@ -143,13 +200,7 @@ export default function AdminSeoPushes() {
                   <Td className="text-xs">{l.channel === 'baidu' ? '百度' : 'IndexNow'}</Td>
                   <Td className="text-xs">{EVENT_LABEL[l.event] ?? l.event}</Td>
                   <Td>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
-                        l.status === 'ok' ? 'bg-boost/10 text-boost' : 'bg-danger/10 text-danger'
-                      }`}
-                    >
-                      {l.status === 'ok' ? '成功' : '失败'}
-                    </span>
+                    <StatusBadge status={l.status} httpCode={l.httpCode} message={l.message} attempts={l.attempts} />
                   </Td>
                   <Td className="text-right text-xs">{l.httpCode ?? '—'}</Td>
                   <Td className="text-right text-xs">{l.attempts > 1 ? `${l.attempts} 次` : '—'}</Td>
