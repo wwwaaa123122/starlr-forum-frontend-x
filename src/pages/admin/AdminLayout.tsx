@@ -27,6 +27,7 @@ const SECTIONS: Section[] = [
   { to: '/admin/moderators', label: '版主', adminOnly: true },
   { to: '/admin/admins', label: '管理员', adminOnly: true },
   { to: '/admin/audit', label: '审计日志', adminOnly: true },
+  { to: '/admin/seo-pushes', label: '推送记录', adminOnly: true },
 ];
 
 export default function AdminLayout() {

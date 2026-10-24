@@ -17,6 +17,7 @@ import AdminSso from '@/pages/admin/AdminSso';
 import AdminModerators from '@/pages/admin/AdminModerators';
 import AdminAdmins from '@/pages/admin/AdminAdmins';
 import AdminAudit from '@/pages/admin/AdminAudit';
+import AdminSeoPushes from '@/pages/admin/AdminSeoPushes';
 import { useAuth } from '@/lib/auth';
 import { Spinner } from '@/components/ui/primitives';
 import Home from '@/pages/Home';
@@ -144,6 +145,7 @@ export default function App() {
           <Route path="moderators" element={<AdminModerators />} />
           <Route path="admins" element={<AdminAdmins />} />
           <Route path="audit" element={<AdminAudit />} />
+          <Route path="seo-pushes" element={<AdminSeoPushes />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
