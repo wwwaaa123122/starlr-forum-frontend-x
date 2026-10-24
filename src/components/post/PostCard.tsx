@@ -225,7 +225,7 @@ export const PostCard = memo(function PostCard({
                         举报
                       </MenuItem>
                     )}
-                    {(isAuthor || canModerate) && (
+                    {isAuthor && (
                       <MenuItem
                         icon={<Pencil size={16} />}
                         onClick={() => {

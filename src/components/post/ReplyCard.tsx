@@ -158,6 +158,11 @@ export function ReplyCard({
               <span className="text-muted">·</span>
               <time className="shrink-0 text-muted">{relativeTime(reply.createdAt)}</time>
               {reply.editedAt && <span className="shrink-0 text-xs text-faint">已编辑</span>}
+              {reply.isDeleted && (
+                <span className="shrink-0 rounded bg-danger/10 px-1.5 py-0.5 text-xs font-medium text-danger">
+                  已删除
+                </span>
+              )}
               <div className="ml-auto shrink-0">
                 <Dropdown
                   trigger={({ toggle }) => (

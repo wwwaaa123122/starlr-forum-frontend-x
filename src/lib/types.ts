@@ -69,6 +69,7 @@ export interface Reply {
   createdAt: string;
   updatedAt: string;
   editedAt?: string | null;
+  isDeleted?: boolean;
   liked?: number | boolean;
   authorId: string;
   authorName: string;

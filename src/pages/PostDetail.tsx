@@ -134,7 +134,7 @@ export default function PostDetail() {
     onError: () => toast.error('操作失败，请重试'),
   });
 
-  /* 编辑帖子（作者或版主） */
+  /* 编辑帖子（仅作者） */
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
@@ -271,7 +271,7 @@ export default function PostDetail() {
           <span className="flex items-center gap-1 text-sm">
             <Eye size={14} /> {formatCount(post.viewCount)}
           </span>
-          {(post.isAuthor || post.canModerate) && (
+          {post.isAuthor && (
             <button
               onClick={openEdit}
               className="flex items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
