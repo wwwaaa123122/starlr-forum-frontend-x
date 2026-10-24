@@ -209,10 +209,3 @@ Parshuram02/twitter-clone、weiwei2694/x-twitter-clone）的**布局模式与交
 ## 许可
 
 本项目基于 [GPL-3.0-or-later](./LICENSE) 开源。
-
-- 可自由使用、学习、修改、分发；
-- 二次开发作品必须同样以 GPL-3.0 开源并保留原始版权声明；
-- 按「现状」提供，不附带任何担保；
-- 版权所有 © 2026 wwwaaa123122。
-
-第三方依赖均为 MIT / Apache-2.0 / ISC 等宽松许可（React、Vite、Tailwind、TanStack Query、react-router、lucide-react 等），与 GPL-3.0 兼容。
