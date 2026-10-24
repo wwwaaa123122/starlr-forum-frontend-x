@@ -69,8 +69,7 @@ export default function AdminNotify() {
         <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder="可留空，填站内路径" />
       </div>
 
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted">系统通知无发送频率限制；群发按目标用户数即时入库</span>
+      <div className="flex justify-end">
         <Button pill onClick={() => void send()} disabled={sending || !title.trim()}>
           <Send className="size-4" /> {sending ? '发送中…' : '发送通知'}
         </Button>
