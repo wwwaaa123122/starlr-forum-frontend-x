@@ -107,9 +107,7 @@ export default function AdminSso() {
             spellCheck={false}
             onChange={(e) => setText(e.target.value)}
           />
-          <div className="mt-1 text-xs text-muted">
-            {SOURCE_LABEL[data.source]} · 最多 50 个；桥接页会自动拉取最新白名单（约 1 分钟内生效），无需重新部署。
-          </div>
+          <div className="mt-1 text-xs text-muted">{SOURCE_LABEL[data.source]} · 最多 50 个</div>
         </div>
 
         {error && <div className="mt-2 text-xs text-danger">{error}</div>}

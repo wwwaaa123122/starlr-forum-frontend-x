@@ -137,7 +137,6 @@ export default function AdminReports() {
       {/* 处理弹窗 */}
       <Modal open={Boolean(handleTarget)} onClose={() => setHandleTarget(null)} className="w-[92vw] max-w-md p-6">
         <h3 className="text-lg font-extrabold">处理举报</h3>
-        <p className="mt-1 text-[13px] text-muted">被举报内容由系统留存，处理后仍可在此回溯查看。</p>
         <div className="mt-4 space-y-3">
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-semibold text-muted">处理方式</span>

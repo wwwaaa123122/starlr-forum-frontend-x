@@ -275,7 +275,6 @@ export default function AdminUsers() {
       {/* 封禁弹窗 */}
       <Modal open={Boolean(banTarget)} onClose={() => setBanTarget(null)} className="w-[92vw] max-w-md p-6">
         <h3 className="text-lg font-extrabold">封禁用户 {banTarget?.username}</h3>
-        <p className="mt-1 text-[13px] text-muted">封禁后该用户将无法登录，其所有登录状态立即失效。</p>
         <div className="mt-4 space-y-3">
           <Field label="原因">
             <Textarea value={banReason} onChange={(e) => setBanReason(e.target.value)} rows={2} />
@@ -306,7 +305,6 @@ export default function AdminUsers() {
       {/* 禁言弹窗 */}
       <Modal open={Boolean(muteTarget)} onClose={() => setMuteTarget(null)} className="w-[92vw] max-w-md p-6">
         <h3 className="text-lg font-extrabold">禁言用户 {muteTarget?.username}</h3>
-        <p className="mt-1 text-[13px] text-muted">禁言期间该用户不能发布帖子、回复或评论。</p>
         <div className="mt-4 space-y-3">
           <Field label="原因">
             <Textarea value={muteReason} onChange={(e) => setMuteReason(e.target.value)} rows={2} />

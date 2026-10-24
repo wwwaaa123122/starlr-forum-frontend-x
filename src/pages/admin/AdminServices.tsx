@@ -144,7 +144,6 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
         <h2 className="text-[15px] font-extrabold">{svc.label}</h2>
         <Tag tone={svc.configured ? 'ok' : 'warn'}>{svc.configured ? '已配置' : '未配置'}</Tag>
       </div>
-      <p className="mb-4 text-[13px] leading-relaxed text-muted">{svc.description}</p>
 
       {svc.key === 'mail' && (
         <div className="space-y-2">
@@ -262,7 +261,7 @@ function ServiceCard({ svc, onSaved }: { svc: ServiceView; onSaved: () => void }
             <Input
               value={mailAccount}
               onChange={(e) => setMailAccount(e.target.value.replace(/\D/g, ''))}
-              placeholder={`留空 = 按轮询自动选择（当前共 ${(svc.accounts ?? []).length} 个账号，填 1-${(svc.accounts ?? []).length} 指定）`}
+              placeholder={`留空 = 自动轮询（共 ${(svc.accounts ?? []).length} 个）`}
               inputMode="numeric"
             />
           </Field>

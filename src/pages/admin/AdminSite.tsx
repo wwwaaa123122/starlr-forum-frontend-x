@@ -96,22 +96,22 @@ export default function AdminSite() {
         <section className="rounded-xl border border-line p-4 space-y-3">
           <h2 className="text-sm font-bold">站点信息</h2>
           <label className="block space-y-1">
-            <span className="text-xs text-muted">站点名称（浏览器标题、登录页、页脚等）</span>
+            <span className="text-xs text-muted">站点名称</span>
             <input className={field} value={site.site_name} maxLength={60}
               onChange={(e) => setSite({ ...site, site_name: e.target.value })} />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs text-muted">标语（可选）</span>
+            <span className="text-xs text-muted">标语</span>
             <input className={field} value={site.site_tagline ?? ''} maxLength={120}
               onChange={(e) => setSite({ ...site, site_tagline: e.target.value })} />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs text-muted">站点描述（可选，SEO 用）</span>
+            <span className="text-xs text-muted">站点描述</span>
             <textarea className={`${field} min-h-20`} value={site.site_description ?? ''} maxLength={300}
               onChange={(e) => setSite({ ...site, site_description: e.target.value })} />
           </label>
           <label className="block space-y-1">
-            <span className="text-xs text-muted">页脚文案（可选）</span>
+            <span className="text-xs text-muted">页脚文案</span>
             <input className={field} value={site.site_footer ?? ''} maxLength={120}
               onChange={(e) => setSite({ ...site, site_footer: e.target.value })} />
           </label>
@@ -131,20 +131,14 @@ export default function AdminSite() {
             />
           </label>
           <label className="flex items-center justify-between gap-4">
-            <span className="text-sm">
-              注册需要邮箱
-              <span className="block text-xs text-muted">关闭后用户仅用用户名+密码即可注册</span>
-            </span>
+            <span className="text-sm">注册需要邮箱</span>
             <Switch
               checked={setup.registration_email_required}
               onChange={(v) => void saveSetup({ registration_email_required: v })}
             />
           </label>
             <label className="flex items-center justify-between gap-4">
-              <span className="text-sm">
-                图片上传到 S3
-                <span className="block text-xs text-muted">关闭时头像/图片走 R2 或 KV；开启需先在服务配置中填 S3 凭据</span>
-              </span>
+              <span className="text-sm">图片上传到 S3</span>
               <select
                 className="rounded-lg border border-line bg-surface px-2 py-1.5 text-sm"
                 value={setup.uploads_storage}

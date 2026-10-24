@@ -223,9 +223,7 @@ export default function Settings() {
               {user.likesPublic ? <Eye size={16} className="text-brand" /> : <EyeOff size={16} className="text-muted" />}
               公开我的喜欢
             </p>
-            <p className="mt-0.5 text-xs text-muted">
-              开启后其他用户可在你的主页查看你点赞过的帖子；关闭时仅自己可见。
-            </p>
+            <p className="mt-0.5 text-xs text-muted">开启后其他用户可在你的主页查看你点赞过的帖子。</p>
           </div>
           <button
             type="button"
@@ -266,7 +264,7 @@ export default function Settings() {
             <Button variant="outline" pill size="sm" onClick={() => fileRef.current?.click()}>
               更换头像
             </Button>
-            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/WEBP（可框选裁剪，自动压缩至 512px）· GIF 直接使用</p>
+            <p className="mt-1.5 text-xs text-faint">≤ 2MB · JPEG/PNG/WEBP · GIF</p>
           </div>
           <input
             ref={fileRef}

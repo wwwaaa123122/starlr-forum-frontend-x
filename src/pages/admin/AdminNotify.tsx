@@ -40,9 +40,6 @@ export default function AdminNotify() {
     <div className="space-y-4 rounded-2xl border border-line bg-surface p-4">
       <div>
         <h3 className="text-[15px] font-extrabold">发送系统通知</h3>
-        <p className="mt-0.5 text-xs text-muted">
-          通知会出现在用户的通知中心（系统通知）。可群发全部用户，或按 UID 定向发送。
-        </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

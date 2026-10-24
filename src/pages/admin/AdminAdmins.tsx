@@ -90,10 +90,6 @@ export default function AdminAdmins() {
       {/* 授权表单 */}
       <div className="space-y-3 rounded-2xl border border-line bg-surface p-4">
         <h3 className="text-[15px] font-extrabold">授权新管理员</h3>
-        <p className="text-xs text-muted">
-          输入目标用户的 UID（注册时自动分配，管理员为 UID 1），即可授予管理员或版主权限。
-          管理告警发送至 UID 1 邮箱：{data?.ownerEmail ?? '（UID 1 未设置邮箱）'}
-        </p>
         <div className="flex flex-wrap items-end gap-2">
           <label className="block">
             <span className="mb-1.5 block text-[13px] font-semibold text-muted">UID</span>
