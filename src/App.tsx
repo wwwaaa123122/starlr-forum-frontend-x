@@ -19,6 +19,7 @@ import AdminAdmins from '@/pages/admin/AdminAdmins';
 import AdminAudit from '@/pages/admin/AdminAudit';
 import AdminSeoPushes from '@/pages/admin/AdminSeoPushes';
 import { useAuth } from '@/lib/auth';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Spinner } from '@/components/ui/primitives';
 import Home from '@/pages/Home';
 import Explore from '@/pages/Explore';
@@ -113,6 +114,7 @@ export default function App() {
       <SeoBridge />
       <ScrollManager />
       <PageTransition>
+        <ErrorBoundary>
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
@@ -149,6 +151,7 @@ export default function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+        </ErrorBoundary>
       </PageTransition>
     </AppShell>
   );
