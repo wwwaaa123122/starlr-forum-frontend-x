@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       # npm 10.x 偶发 "Exit handler never called!"（npm#67373）导致依赖装不全、tsc 缺失；
       # 先升到 Node 22 自带的 npm 11，再用 --no-audit --no-fund 降低触发面
