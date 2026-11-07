@@ -28,7 +28,7 @@ export function RightRail({ hidden }: { hidden?: boolean }) {
   const cfg = useSiteConfig();
   if (hidden) return null;
   return (
-    <aside className="sticky top-0 hidden h-dvh w-[350px] shrink-0 flex-col gap-4 overflow-y-auto px-5 py-2 pb-8 lg:flex">
+    <aside className="sticky top-0 hidden h-dvh w-87.5 shrink-0 flex-col gap-4 overflow-y-auto px-5 py-2 pb-8 lg:flex">
       <SearchBox />
       <HotPostsCard />
       <CategoriesCard />

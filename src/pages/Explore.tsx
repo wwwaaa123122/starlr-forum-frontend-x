@@ -34,7 +34,7 @@ export default function Explore() {
 
   useEffect(() => {
     document.title = siteTitle(cfg, '探索');
-  }, []);
+  }, [cfg]);
 
   const submit = (value: string) => {
     const next = new URLSearchParams(searchParams);

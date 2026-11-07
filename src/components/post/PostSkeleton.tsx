@@ -5,7 +5,7 @@ export function PostSkeleton() {
   return (
     <div className="border-b border-line px-4 py-4">
       <div className="flex gap-3">
-        <Skeleton className="h-[42px] w-[42px] shrink-0 rounded-full" />
+        <Skeleton className="h-10.5 w-10.5 shrink-0 rounded-full" />
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex gap-2">
             <Skeleton className="h-4 w-28" />

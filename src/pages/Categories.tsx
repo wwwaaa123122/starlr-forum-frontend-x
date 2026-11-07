@@ -22,7 +22,7 @@ export default function Categories() {
   const cfg = useSiteConfig();
   useEffect(() => {
     document.title = siteTitle(cfg, '板块');
-  }, []);
+  }, [cfg]);
   const { data, isLoading } = useQuery({ queryKey: ['categories'], queryFn: listCategories });
 
   return (

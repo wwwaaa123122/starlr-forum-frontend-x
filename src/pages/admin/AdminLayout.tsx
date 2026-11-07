@@ -91,7 +91,7 @@ export default function AdminLayout() {
               role="tab"
               className={({ isActive }) =>
                 cn(
-                  'rounded-full px-3.5 py-1.5 text-[14px] transition',
+                  'rounded-full px-3.5 py-1.5 text-sm transition',
                   isActive
                     ? 'bg-brand-soft font-bold text-brand'
                     : 'text-muted hover:bg-surface2 hover:text-ink',

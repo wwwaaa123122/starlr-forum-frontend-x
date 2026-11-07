@@ -26,14 +26,14 @@ export function MobileTabBar() {
         <button
           onClick={() => navigate('/compose')}
           aria-label="发帖"
-          className="focus-ring fixed bottom-[76px] right-4 z-40 flex h-13 w-13 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-brand/30 transition active:scale-95 md:hidden"
+          className="focus-ring fixed bottom-19 right-4 z-40 flex h-13 w-13 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-brand/30 transition active:scale-95 md:hidden"
         >
           <PenLine size={24} />
         </button>
       )}
 
       {/* 底部标签栏 */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex h-[60px] items-stretch justify-around border-t border-line bg-canvas/90 pb-safe backdrop-blur-lg md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex h-15 items-stretch justify-around border-t border-line bg-canvas/90 pb-safe backdrop-blur-lg md:hidden">
         {items.map((item) => {
           const active = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
           const Icon = item.icon;
@@ -52,7 +52,7 @@ export function MobileTabBar() {
                 <Icon size={25} strokeWidth={active ? 2.4 : 1.9} />
               </span>
               {item.badge != null && item.badge > 0 && (
-                <span className="absolute right-2 top-1 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
+                <span className="absolute right-2 top-1 flex h-4.25 min-w-4.25 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
                   {item.badge > 99 ? '99+' : item.badge}
                 </span>
               )}

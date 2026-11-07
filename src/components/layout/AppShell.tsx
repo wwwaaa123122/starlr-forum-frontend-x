@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <MobileDrawerContext.Provider value={{ openDrawer: () => setDrawerOpen(true) }}>
       <div className="min-h-dvh bg-canvas text-ink">
-        <div className="mx-auto flex w-full max-w-[1290px] justify-center">
+        <div className="mx-auto flex w-full max-w-322.5 justify-center">
           {/* 左栏：管理后台隐藏；<768 隐藏；768–1280 仅图标（64px）；≥1280 完整（235px） */}
           {!isAdmin && <LeftSidebar />}
 
@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <main
             className={cn(
               'min-h-dvh w-full min-w-0 border-line pb-20 md:border-x md:pb-0',
-              isAdmin ? 'max-w-[1100px]' : 'max-w-[600px]',
+              isAdmin ? 'max-w-275' : 'max-w-150',
             )}
           >
             {children}

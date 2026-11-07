@@ -125,12 +125,12 @@ export default function Login() {
           </form>
           <div className="mt-2 flex items-center gap-3">
             <div className="h-px flex-1 bg-line" />
-            <span className="text-[12px] text-muted">或</span>
+            <span className="text-xs text-muted">或</span>
             <div className="h-px flex-1 bg-line" />
           </div>
           <a
             href={githubOAuthStartUrl()}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-line py-2.5 text-[14px] font-medium transition hover:bg-surface2"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-line py-2.5 text-sm font-medium transition hover:bg-surface2"
           >
             <GithubIcon size={17} />
             使用 GitHub 登录

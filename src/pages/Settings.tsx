@@ -56,7 +56,7 @@ export default function Settings() {
 
   useEffect(() => {
     document.title = siteTitle(cfg, '设置');
-  }, []);
+  }, [cfg]);
 
   useEffect(() => {
     if (user && !initialized) {
@@ -118,10 +118,6 @@ export default function Settings() {
     onError: (e) => toast.error(e instanceof Error ? e.message : '上传失败'),
   });
 
-  if (!user) return null;
-
-  const isUnverified = user.accountStatus === 'unverified';
-
   const resendMut = useMutation({
     mutationFn: resendVerification,
     onSuccess: (res) => {
@@ -129,6 +125,10 @@ export default function Settings() {
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : '发送失败'),
   });
+
+  if (!user) return null;
+
+  const isUnverified = user.accountStatus === 'unverified';
 
   return (
     <>
@@ -160,7 +160,7 @@ export default function Settings() {
         </h2>
         <div
           className={cn(
-            'relative h-[120px] overflow-hidden rounded-2xl border border-line md:h-[150px]',
+            'relative h-30 overflow-hidden rounded-2xl border border-line md:h-37.5',
             !user.backgroundUrl && 'bg-[radial-gradient(ellipse_at_top,var(--sl-brand-soft),transparent_60%)]',
           )}
         >
@@ -239,7 +239,7 @@ export default function Settings() {
             <span
               className={cn(
                 'absolute top-0.5 size-6 rounded-full bg-white shadow transition-all',
-                user.likesPublic ? 'left-[22px]' : 'left-0.5',
+                user.likesPublic ? 'left-5.5' : 'left-0.5',
               )}
             />
           </button>

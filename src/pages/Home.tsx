@@ -26,7 +26,7 @@ export default function Home() {
 
   useEffect(() => {
     document.title = siteTitle(cfg);
-  }, []);
+  }, [cfg]);
 
   const {
     data,

@@ -13,7 +13,7 @@ export default function Bookmarks() {
   const cfg = useSiteConfig();
   useEffect(() => {
     document.title = siteTitle(cfg, '书签');
-  }, []);
+  }, [cfg]);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['me-favorites'],

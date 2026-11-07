@@ -50,7 +50,7 @@ export function LeftSidebar() {
   const isDark = useTheme() === 'dark';
 
   return (
-    <aside className="sticky top-0 hidden h-dvh shrink-0 flex-col justify-between py-2 pl-0 pr-1 md:flex md:w-[64px] xl:w-[235px]">
+    <aside className="sticky top-0 hidden h-dvh shrink-0 flex-col justify-between py-2 pl-0 pr-1 md:flex md:w-16 xl:w-58.75">
       <div className="flex flex-col items-center xl:items-start">
         {/* Logo */}
         <Link
@@ -80,7 +80,7 @@ export function LeftSidebar() {
                 <span className="relative transition-transform group-active:scale-90">
                   <Icon size={26} strokeWidth={active ? 2.4 : 1.9} />
                   {item.badge != null && item.badge > 0 && (
-                    <span className="absolute -right-1.5 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
+                    <span className="absolute -right-1.5 -top-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
                       {item.badge > 99 ? '99+' : item.badge}
                     </span>
                   )}
@@ -97,7 +97,7 @@ export function LeftSidebar() {
             <Button
               pill
               size="lg"
-              className="h-13 w-full max-w-[52px] text-lg xl:max-w-none"
+              className="h-13 w-full max-w-13 text-lg xl:max-w-none"
               onClick={() => navigate('/compose')}
               aria-label="发帖"
             >
@@ -133,10 +133,10 @@ export function LeftSidebar() {
               >
                 <Avatar src={user.avatarUrl} name={displayName(user.nickname || user.username)} size={40} />
                 <span className="hidden min-w-0 flex-1 flex-col items-start leading-tight xl:flex">
-                  <span className="max-w-[120px] truncate text-[15px] font-bold">
+                  <span className="max-w-30 truncate text-[15px] font-bold">
                     {displayName(user.nickname || user.username)}
                   </span>
-                  <span className="max-w-[120px] truncate text-sm text-muted">@{user.username}</span>
+                  <span className="max-w-30 truncate text-sm text-muted">@{user.username}</span>
                 </span>
                 <MoreHorizontal size={18} className="hidden shrink-0 text-muted xl:block" />
               </button>
@@ -181,7 +181,7 @@ export function LeftSidebar() {
             pill
             size="lg"
             variant="primary"
-            className="h-13 w-full max-w-[52px] text-lg xl:max-w-none"
+            className="h-13 w-full max-w-13 text-lg xl:max-w-none"
             onClick={() => navigate('/login')}
             aria-label="登录"
           >

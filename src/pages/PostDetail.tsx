@@ -165,7 +165,7 @@ export default function PostDetail() {
       path: post ? `/post/${post.id}` : undefined,
       ogType: 'article',
     });
-  }, [post]);
+  }, [post, cfg]);
 
   /* 楼中楼：parentReplyId 分组（跨所有已加载页） */
   const replies = useMemo(() => repliesData?.pages.flatMap((p) => p.replies) ?? [], [repliesData]);
@@ -282,9 +282,9 @@ export default function PostDetail() {
           )}
         </div>
 
-        <RichText content={post.content} className="mt-3 text-[16px]" />
+        <RichText content={post.content} className="mt-3 text-base" />
 
-        <div className="mt-3 flex max-w-[425px] items-center justify-between border-t border-line pt-2.5">
+        <div className="mt-3 flex max-w-106.25 items-center justify-between border-t border-line pt-2.5">
           <ActionButton
             icon={<CornerDownRight size={17} />}
             count={post.replyCount}
@@ -381,7 +381,7 @@ export default function PostDetail() {
           onClose={() => setEditing(false)}
         >
           <div className="space-y-3">
-            <h2 className="text-[16px] font-bold">编辑帖子</h2>
+            <h2 className="text-base font-bold">编辑帖子</h2>
             <Input
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value.slice(0, 120))}

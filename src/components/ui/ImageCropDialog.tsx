@@ -129,7 +129,7 @@ export function ImageCropDialog({
         <p className="mt-0.5 text-xs text-muted">拖动选框或缩放图片，调整要保留的区域</p>
       </div>
 
-      <div className="relative mx-5 mt-4 h-[300px] touch-none overflow-hidden rounded-xl bg-black/80 sm:h-[340px]">
+      <div className="relative mx-5 mt-4 h-75 touch-none overflow-hidden rounded-xl bg-black/80 sm:h-85">
         {src && (
           <Cropper
             image={src}

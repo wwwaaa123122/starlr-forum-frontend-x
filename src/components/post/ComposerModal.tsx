@@ -8,7 +8,7 @@ export function ComposerModal({ open, onClose }: { open: boolean; onClose: () =>
     <Modal
       open={open}
       onClose={onClose}
-      className="max-w-[600px]"
+      className="max-w-150"
       closeOnBackdrop={false}
     >
       <div className="flex h-14 items-center px-2">

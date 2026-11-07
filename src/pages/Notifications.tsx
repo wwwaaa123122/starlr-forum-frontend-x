@@ -50,7 +50,7 @@ export default function Notifications() {
 
   useEffect(() => {
     document.title = siteTitle(cfg, '通知');
-  }, []);
+  }, [cfg]);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ['notifications'],

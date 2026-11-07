@@ -256,7 +256,7 @@ export function ReplyCard({
             <RichText content={reply.content} className="mt-0.5" />
           )}
 
-          <div className="mt-1.5 flex max-w-[320px] items-center gap-6">
+          <div className="mt-1.5 flex max-w-80 items-center gap-6">
             <ActionButton
               icon={<Star size={16} className={cn(liked && 'fill-current')} />}
               count={likeCount}

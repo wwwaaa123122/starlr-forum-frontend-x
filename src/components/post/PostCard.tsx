@@ -304,7 +304,7 @@ export const PostCard = memo(function PostCard({
           )}
 
           {/* 操作条 */}
-          <div className="mt-2.5 flex max-w-[425px] items-center justify-between">
+          <div className="mt-2.5 flex max-w-106.25 items-center justify-between">
             <ActionButton
               icon={<MessageCircle size={17} />}
               count={post.replyCount}
@@ -438,7 +438,7 @@ export function ActionButton({
     >
       <span
         className={cn(
-          'btn-icon h-[34px] w-[34px] transition-transform group-active:scale-90',
+          'btn-icon h-8.5 w-8.5 transition-transform group-active:scale-90',
           c.halo,
           readOnly ? '' : c.text,
           active && c.active,
@@ -450,7 +450,7 @@ export function ActionButton({
         </span>
       </span>
       {count != null && count > 0 && (
-        <span className={cn('min-w-[24px] text-left', active && c.active)}>{formatCount(count)}</span>
+        <span className={cn('min-w-6 text-left', active && c.active)}>{formatCount(count)}</span>
       )}
     </button>
   );

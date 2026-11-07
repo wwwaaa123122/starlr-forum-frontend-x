@@ -52,11 +52,12 @@ export function Composer({
 
   // 默认选中第一个可用分类
   useEffect(() => {
-    if (mode === 'post' && !categoryId && categories.length) {
-      const first = categories.find((c) => c.postPolicy === 'everyone' || user?.role !== 'user');
+    const cats = catsData?.categories ?? [];
+    if (mode === 'post' && !categoryId && cats.length) {
+      const first = cats.find((c) => c.postPolicy === 'everyone' || user?.role !== 'user');
       if (first) setCategoryId(first.slug);
     }
-  }, [categories, categoryId, mode, user?.role]);
+  }, [catsData, categoryId, mode, user?.role]);
 
   // 自动增高（X 式纯 JS）
   const autosize = () => {
@@ -289,7 +290,7 @@ export function Composer({
                       className="btn-icon focus-ring h-9 gap-1 px-2.5 text-[13px] font-semibold text-muted hover:bg-brand-soft hover:text-brand"
                     >
                       <Hash size={16} />
-                      <span className="max-w-[88px] truncate">{selectedCat?.name ?? '板块'}</span>
+                      <span className="max-w-22 truncate">{selectedCat?.name ?? '板块'}</span>
                       <ChevronDown size={13} />
                     </button>
                   )}

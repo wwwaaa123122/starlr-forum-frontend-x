@@ -39,7 +39,7 @@ export default function Profile() {
       description: profile?.bio ?? undefined,
       path: profile ? `/u/${encodeURIComponent(profile.username)}` : undefined,
     });
-  }, [profile]);
+  }, [profile, cfg]);
 
   const postsQuery = useInfiniteQuery({
     queryKey: ['user-posts', username],
@@ -72,9 +72,9 @@ export default function Profile() {
     return (
       <>
         <ColumnHeader back />
-        <Skeleton className="h-[160px] w-full rounded-none md:h-[200px]" />
+        <Skeleton className="h-40 w-full rounded-none md:h-50" />
         <div className="flex items-end justify-between px-4">
-          <Skeleton className="-mt-10 h-24 w-24 rounded-full border-4 border-canvas md:-mt-14 md:h-[124px] md:w-[124px]" />
+          <Skeleton className="-mt-10 h-24 w-24 rounded-full border-4 border-canvas md:-mt-14 md:h-31 md:w-31" />
           <Skeleton className="mb-2 h-9 w-28 rounded-full" />
         </div>
         <div className="space-y-2 p-4">
@@ -126,7 +126,7 @@ export default function Profile() {
       <ColumnHeader back title={name} subtitle={`${formatCount(profile.postCount)} 帖子`} />
 
       {/* Banner：自定义背景图（未设置时用星云渐变占位） */}
-      <div className="relative h-[150px] bg-surface2 md:h-[200px]">
+      <div className="relative h-37.5 bg-surface2 md:h-50">
         {profile.backgroundUrl ? (
           <img
             src={assetUrl(profile.backgroundUrl)}
@@ -145,8 +145,8 @@ export default function Profile() {
 
       {/* 头像压边 + 操作按钮 */}
       <div className="flex items-end justify-between px-4">
-        <div className={cn('-mt-12 rounded-full border-4 border-canvas md:-mt-[70px]')}>
-          <Avatar src={profile.avatarUrl} name={name} size={96} className="md:h-[124px] md:w-[124px]" />
+        <div className={cn('-mt-12 rounded-full border-4 border-canvas md:-mt-17.5')}>
+          <Avatar src={profile.avatarUrl} name={name} size={96} className="md:h-31 md:w-31" />
         </div>
         <div className="mt-3 flex gap-2">
           {isMe ? (

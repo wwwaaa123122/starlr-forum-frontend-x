@@ -49,7 +49,7 @@ export function VerifyEmailPage() {
           ) : state === 'loading' ? (
             <Spinner className="size-10" />
           ) : (
-            <XCircle className="size-12 text-destructive" />
+            <XCircle className="size-12 text-danger" />
           )}
         </div>
         <h1 className="text-lg font-extrabold">

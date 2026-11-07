@@ -168,7 +168,7 @@ function Switch({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       <span
         className={cn(
           'absolute top-0.5 size-6 rounded-full bg-white shadow transition-all',
-          checked ? 'left-[22px]' : 'left-0.5',
+          checked ? 'left-5.5' : 'left-0.5',
         )}
       />
     </button>

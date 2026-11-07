@@ -10,7 +10,7 @@ export default function Compose() {
   // 桌面端：居中卡片 + 遮罩（与 X 的模态一致，但保留 URL 可回退）
   return (
     <div className="min-h-dvh md:fixed md:inset-0 md:z-50 md:flex md:items-start md:justify-center md:bg-black/60 md:p-4 md:backdrop-blur-sm md:pt-24">
-      <div className="md:w-full md:max-w-[600px] md:rounded-2xl md:border md:border-line md:bg-canvas md:shadow-2xl">
+      <div className="md:w-full md:max-w-150 md:rounded-2xl md:border md:border-line md:bg-canvas md:shadow-2xl">
         {/* 移动端顶栏：返回 + 标题 */}
         <div className="flex h-14 items-center gap-3 border-b border-line px-3 md:hidden">
           <IconButton label="返回" onClick={() => navigate(-1)}>

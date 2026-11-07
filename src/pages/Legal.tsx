@@ -18,7 +18,7 @@ function LegalShell({
   const cfg = useSiteConfig();
   useEffect(() => {
     document.title = siteTitle(cfg, title);
-  }, [title]);
+  }, [cfg, title]);
 
   return (
     <>
@@ -191,7 +191,7 @@ export function LicensePage() {
         <h2>授权</h2>
         <p>
           本项目（Starlr Forum：后端、Web 前端与 Android 客户端）基于{' '}
-          <a className="text-primary hover:underline" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer">GNU GPL-3.0-or-later</a>{' '}
+          <a className="text-brand hover:underline" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noreferrer">GNU GPL-3.0-or-later</a>{' '}
           协议开源，完整协议文本见各仓库根目录的 LICENSE 文件。
         </p>
       </div>
@@ -218,9 +218,9 @@ export function LicensePage() {
       <div>
         <h2>源码仓库</h2>
         <ul className="list-disc space-y-1.5 pl-5">
-          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-backend" target="_blank" rel="noreferrer">starlr-forum-backend</a>（Cloudflare Workers 后端）</li>
-          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-frontend-x" target="_blank" rel="noreferrer">starlr-forum-frontend-x</a>（Web 前端）</li>
-          <li><a className="text-primary hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-android" target="_blank" rel="noreferrer">starlr-forum-android</a>（Android 客户端）</li>
+          <li><a className="text-brand hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-backend" target="_blank" rel="noreferrer">starlr-forum-backend</a>（Cloudflare Workers 后端）</li>
+          <li><a className="text-brand hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-frontend-x" target="_blank" rel="noreferrer">starlr-forum-frontend-x</a>（Web 前端）</li>
+          <li><a className="text-brand hover:underline" href="https://github.com/wwwaaa123122/starlr-forum-android" target="_blank" rel="noreferrer">starlr-forum-android</a>（Android 客户端）</li>
         </ul>
       </div>
     </LegalShell>

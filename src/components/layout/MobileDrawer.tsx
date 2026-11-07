@@ -53,7 +53,7 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
         aria-hidden
       />
       <div
-        className={`absolute inset-y-0 left-0 flex w-[78%] max-w-[320px] flex-col border-r border-line bg-canvas p-5 shadow-2xl ${
+        className={`absolute inset-y-0 left-0 flex w-[78%] max-w-80 flex-col border-r border-line bg-canvas p-5 shadow-2xl ${
           open ? 'anim-drawer' : 'anim-drawer-out'
         }`}
       >
@@ -97,7 +97,7 @@ export function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => 
                 <span className="relative">
                   <Icon size={22} strokeWidth={1.9} />
                   {item.badge != null && item.badge > 0 && (
-                    <span className="absolute -right-1.5 -top-1 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
+                    <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-white">
                       {item.badge > 99 ? '99+' : item.badge}
                     </span>
                   )}
