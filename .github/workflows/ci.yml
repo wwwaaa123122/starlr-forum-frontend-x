@@ -15,11 +15,13 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
+      # npm 10.x 偶发 "Exit handler never called!"（npm#67373）导致依赖装不全、tsc 缺失；
+      # 先升到 Node 22 自带的 npm 11，再用 --no-audit --no-fund 降低触发面
       - name: 安装依赖
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: TypeScript 类型检查
         run: npm run typecheck
